@@ -7,7 +7,7 @@ from ._SshComputeNode import SshComputeNode
 
 class Cluster():
     def __init__(self,
-                 compute_nodes=(ComputeNode(), ),
+                 compute_nodes=[ComputeNode(), ],
                  interval=1):
         self.compute_nodes = compute_nodes
         self.interval = interval
@@ -34,11 +34,29 @@ class Cluster():
     def check_continue(self):
         return any(hst.check_continue() for hst in self.compute_nodes)
 
-    def wait_all(self):
-        while self.check_continue():
-            sleep(self.interval)
-        self.kill_all()
+    # def wait_all(self):
+    #     while self.check_continue():
+    #         sleep(self.interval)
+    #     self.kill_all()
 
     def kill_all(self):
         for hst in self.compute_nodes:
             hst.kill_all()
+
+    def send_command(self, command):
+        self.commands_queue.put(command)
+
+    def qsize(self):
+        return self.commands_queue.qsize()
+
+    def search_conpute_node(self, hostname):
+        for cn in self.compute_nodes:
+            if cn.hostname == hostname:
+                return cn
+
+    def update_compute_node(self, hostname, n_jobs=None, interval=None):
+        compute_node = self.search_conpute_node(hostname)
+        if type(n_jobs).__name__ == 'int':
+            compute_node.change_n_jobs(n_jobs)
+        if type(interval).__name__ == 'int':
+            self.interval = interval

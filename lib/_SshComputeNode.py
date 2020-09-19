@@ -19,7 +19,6 @@ class SshComputeNode(ComputeNode):
     def __init__(self, hostname, n_jobs=1,
                  interval=1, thread_name=None,
                  pre_cmd='source .bash_profile',):
-        self.hostname = hostname
         self.pre_cmd = pre_cmd
         if thread_name is None:
             thread_name = hostname
@@ -30,7 +29,7 @@ class SshComputeNode(ComputeNode):
                                  'wc -l'
             n_jobs = int(getoutput(cmd_grep_processor))
         super().__init__(n_jobs=n_jobs, interval=interval,
-                         thread_name=thread_name)
+                         hostname=hostname, thread_name=thread_name)
 
 
     def _start_thread(self, index):
