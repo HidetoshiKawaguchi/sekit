@@ -9,4 +9,4 @@ def load_yaml_or_json(filepath):
         if ext == 'json':
             return json.load(f)
         else: #yaml
-            return yaml.load(f, Loader=yaml.SafeLoader)
+            return yaml.safe_load(f)
