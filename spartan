@@ -1,0 +1,24 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import sys
+import os.path as op
+sys.path.append(op.join(op.dirname(op.abspath(__file__))))
+
+from lib import SpartanController
+from lib import load_yaml_or_json
+
+from argparse import ArgumentParser
+
+if __name__ == '__main__':
+    parser = ArgumentParser(description='')
+    parser.add_argument('filepath', help='')
+    args = parser.parse_args()
+    input_dict = load_yaml_or_json(args.filepath)
+
+    hosts = input_dict.get('hosts', [])
+    command = input_dict.get('command', '')
+    param_grid = input_dict.get('param_grid', [])
+    option = input_dict.get('option', {})
+
+    sc = SpartanController(hosts)
+    sc.exe(command, param_grid, **option)

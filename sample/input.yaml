@@ -1,0 +1,9 @@
+command: python sample/command.py
+param_grid:
+  - {a: [1, 2, 3], b: [hoge, goro]}
+  - {a: [10, 20, 30], b: [giro]}
+hosts:
+  - {hostname: localhost, n_jobs: 2}
+option:
+  n_seeds: 2
+
