@@ -52,7 +52,7 @@ class ComputeNode:
     """ localhost内で復数のプロセスを並列実行するためのクラス。
     """
     def __init__(self, n_jobs=1, interval=1,
-                 hostname='localhost', thread_name='localhost'):
+                 thread_name='localhost'):
         # self.commands = commands
         self.n_jobs = n_jobs
         self.interval = interval

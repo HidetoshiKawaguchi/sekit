@@ -34,10 +34,10 @@ class Cluster():
     def check_continue(self):
         return any(hst.check_continue() for hst in self.compute_nodes)
 
-    # def wait_all(self):
-    #     while self.check_continue():
-    #         sleep(self.interval)
-    #     self.kill_all()
+    def wait_all(self):
+        while self.check_continue():
+            sleep(self.interval)
+        self.kill_all()
 
     def kill_all(self):
         for hst in self.compute_nodes:

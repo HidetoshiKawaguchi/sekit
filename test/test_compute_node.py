@@ -31,7 +31,7 @@ class TestComputeNode(unittest.TestCase):
 
         cn = ComputeNode(n_jobs=2)
         filepath_list = [
-            base + 'tests/___TestExperiment_Manager_{}.txt'.format(i)
+            os.path.join(base, 'test', '___TestExperiment_Manager_{}.txt'.format(i))
             for i in range(5)
         ]
         commands = ['sleep 1; touch {}'.format(fp) for fp in filepath_list]
