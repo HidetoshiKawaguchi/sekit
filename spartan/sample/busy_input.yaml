@@ -1,4 +1,4 @@
-command: python sample/busy_command.py
+command: python spartan/sample/busy_command.py
 param_grid:
   - {a: [1, 2, 3], b: [hoge, goro]}
   - {a: [10, 20, 30], b: [giro]}

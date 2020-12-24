@@ -15,9 +15,7 @@ from lib import ComputeNode
 class TestComputeNode(unittest.TestCase):
     def test_compute_node(self):
         ### テストに必要な情報
-        host_n_cpu = 72
-        ssh_n_cpu = 16
-        ssh_hostname = 'cassia'
+        host_n_cpu = 8
         commands = ['hostname', 'ls'] #何でも良い
 
         #### ローカルホスト
