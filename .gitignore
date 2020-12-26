@@ -1,2 +1,6 @@
 spartan/lib/__pycache__/*
 spartan/.spartan_config.yaml
+
+eio/__pycache__/*
+eio/sample/sample,*
+eio/test/sample,*

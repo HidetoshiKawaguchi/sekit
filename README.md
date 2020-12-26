@@ -9,8 +9,14 @@
 
 ## 必要なパッケージ
 Python3で動きます。
-標準で含まれていない必要なライブラリはPyYAMLだけです。
-以下のコマンドでPyYAMLはインストールできます。
+標準で含まれていない必要なライブラリはNumpy, Pandas, PyYAMLです。
+以下のコマンドでインストールできます。
+```
+pip install numpy
+```
+```
+pip install pandas
+```
 ```
 pip install pyyaml
 ```
@@ -23,7 +29,12 @@ Python 3.8.5
 ```
 $ pip freeze
 certifi==2020.12.5
+numpy==1.19.4
+pandas==1.1.5
+python-dateutil==2.8.1
+pytz==2020.5
 PyYAML==5.3.1
+six==1.15.0
 ```
 
 
