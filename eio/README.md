@@ -112,6 +112,16 @@ if __name__ == '__main__':
             validation_fraction=0.1)
 ```
 
+返り値を３つ以上にしても保存します。その場合の命名規則は、以下のように拡張子の手前に数字をいれます。
+- dict３つを返して保存する場合の保存ファイル名
+  - `sample2,a=relu,hls=100_200,vf=0.1.json`
+  - `sample2,a=relu,hls=100_200,vf=0.1_1.json`
+  - `sample2,a=relu,hls=100_200,vf=0.1_2.json`
+- dict2つとCSV1つを返して保存する場合の保存ファイル名
+  - `sample2,a=relu,hls=100_200,vf=0.1.json`
+  - `sample2,a=relu,hls=100_200,vf=0.1_1.json`
+  - `sample2,a=relu,hls=100_200,vf=0.1.csv`
+
 ## 出力ファイル名に記載されているパラメータ名短縮の規則
 出力されるファイル名は実験関数名と実験パラメータ名とその値で構成されます。
 `sample1.py`の場合は`sample1,a=relu,hls=100_200,vf=0.1.json`ですね。
@@ -182,4 +192,3 @@ if __name__ == '__main__':
   - 実験パラメータのうち、出力ファイルのパラメータの並びで末尾に持ってくるパラメータ
   - str型
   - デフォルトは`_seed`. これはSpartanで自動で生成される乱数シードのため
-
