@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import traceback
 import os.path as op
 import pandas as pd
 import time, json
@@ -51,9 +52,10 @@ def eio(out_dir='./', header=None, param=True,
                     result = func(*args, **kargs)
                 except Exception as e:
                     result = {
-                        'error_type': str(type(e)),
-                        'error_args': str(e.args),
-                        'error_self': str(e)
+                        '_error_type': str(type(e)),
+                        '_error_args': str(e.args),
+                        '_error_self': str(e),
+                        '_error_traceback': traceback.format_exc()
                     }
             process_time = time.time() - start_time
 
@@ -73,8 +75,9 @@ def eio(out_dir='./', header=None, param=True,
                     result['_param'] = kargs
                 if process_time:
                     result['_process_time'] = process_time
-                if error_display and 'error_type' in result: #エラーが起きたとき
-                    print(result)
+                if error_display and '_error_type' in result: #エラーが起きたとき
+                    print('error: ' + str(result['_param']))
+                    print(result['_error_traceback'])
                 result_json_str = json.dumps(result, sort_keys=sort_keys,
                                              ensure_ascii=ensure_ascii, indent=indent,
                                              default=default)
@@ -110,10 +113,3 @@ def eio(out_dir='./', header=None, param=True,
             return result
         return _decorated_func
     return _eio
-
-
-
-
-
-
-
