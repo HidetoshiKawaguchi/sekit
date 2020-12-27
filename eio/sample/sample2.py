@@ -8,9 +8,9 @@ import pandas as pd
 from eio import eio
 
 @eio()
-def sample(hidden_layer_sizes: tuple,
-           activation: str,
-           validation_fraction:float) -> dict:
+def sample2(hidden_layer_sizes: tuple,
+            activation: str,
+            validation_fraction:float) -> dict:
     dict_out = {
         'a': [a * 2 for a in hidden_layer_sizes],
         'b': '___' + activation + '___',
@@ -25,12 +25,7 @@ def sample(hidden_layer_sizes: tuple,
     )
     return dict_out, df_out
 
-
 if __name__ == '__main__':
-    sample(hidden_layer_sizes=[100, ],
-           activation='relu',
-           validation_fraction=0.1)
-
-    sample(hidden_layer_sizes=(200, 300),
-           activation='tanh',
-           validation_fraction=0.4)
+    sample2(hidden_layer_sizes=[100, 200],
+            activation='relu',
+            validation_fraction=0.1)

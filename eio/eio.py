@@ -6,12 +6,12 @@ from .convert_param_to_list import convert_param_to_list
 from .ParamEncoder import ParamEncoder
 from .make_param_str import make_param_str
 
-def eio(out_dir='./', stop_watch=True, trace_back=False,
+def eio(out_dir='./', header=None, param=True,
+        process_time=True, trace_back=False,
         display=True, error_display=False,
-        header=None, param=True,
         sort_keys=True, ensure_ascii=False,
         mkdir='off',
-        indent=4, default=support_numpy, tail_param=('_seed_index', '_seed')):
+        indent=4, default=support_numpy, tail_param=('_seed', )):
     def _eio(func):
         def _decorated_func(*args, **kargs):
             l_header = func.__name__ if header is None else header
@@ -38,10 +38,10 @@ def eio(out_dir='./', stop_watch=True, trace_back=False,
             filename_param_str = make_param_str(param_list, param_encoder=param_encoder, sep=',')
             # 出力ディレクトリの作成
             if mkdir == 'shallow':
-                dirname_param_str = make_param_str(param_list[:-2], param_encoder=param_encoder, sep=',')
+                dirname_param_str = make_param_str(param_list[:-len(tail_param)], param_encoder=param_encoder, sep=',')
                 output_dir = out_dir + '/' + dirname_param_str + '/'
             elif mkdir == 'deep':
-                dirname_param_str = make_param_str(param_list[:-2], param_encoder=param_encoder, sep='/')
+                dirname_param_str = make_param_str(param_list[:-len(tail_param)], param_encoder=param_encoder, sep='/')
                 output_dir = out_dir + '/' + dirname_param_str + '/'
             else: # mkdir == 'on' or mkdir == 'off'
                 output_dir = out_dir + '/'
@@ -59,7 +59,7 @@ def eio(out_dir='./', stop_watch=True, trace_back=False,
             if isinstance(result, dict):
                 if param:
                     result['_param'] = kargs
-                if stop_watch:
+                if process_time:
                     result['_process_time'] = process_time
                 if error_display and 'error_type' in result: #エラーが起きたとき
                     print(result)
@@ -70,7 +70,7 @@ def eio(out_dir='./', stop_watch=True, trace_back=False,
                     if isinstance(res, dict):
                         if param:
                             res['_param'] = kargs
-                        if stop_watch:
+                        if process_time:
                             res['_process_time'] = process_time
                         json_write(res)
                         if error_display and 'error_type' in res: #エラーが起きたとき
