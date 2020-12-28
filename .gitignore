@@ -6,3 +6,5 @@ eio/sample/sample*.json
 eio/sample/sample*.csv
 eio/test/sample,*
 eio/test/test_mkdir/*
+
+search/__pycache__/*
