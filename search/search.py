@@ -29,6 +29,8 @@ def search(filepath_list, out_funcs=tuple(), types=(str, int, float),
         row_dict = {k:v for k, v in result.items() if type(v) in types and k != param_key}
         row_dict.update(result[param_key])
         row_dict[filename_key] = op.basename(filepath)
+        for k, func in out_funcs:
+            row_dict[k] = func(result)
         target_df = target_df.append(row_dict, ignore_index=True)
         if display:
             print('added ' + filepath)
