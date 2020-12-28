@@ -147,8 +147,12 @@ if __name__ == '__main__':
   - 出力ファイル名の頭につける文字列
   - str型
   - デフォルトは`None`. `None`の場合、デコレートされた実験関数名が自動で割り当てられる
-- `param`
+- `param_flag`
   - `_param`（実験パラメータを表したDict)を結果のJSONに入れるか否か
+  - Boolean型
+  - デフォルトはTrue
+- `header_flag`
+  - `_header`（↑の`header`)を結果のJSONに入れるか否か
   - Boolean型
   - デフォルトはTrue
 - `process_time`:

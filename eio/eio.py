@@ -35,7 +35,7 @@ def _make_output_info(out_dir, kargs, tail_param, mkdir):
                                   param_encoder, tail_param)
     return output_dir, filename_param_str
 
-def eio(out_dir='./', header=None, param=True,
+def eio(out_dir='./', header=None, param_flag=True, header_flag=True,
         process_time=True, trace_back=False,
         display=True, error_display=False,
         sort_keys=True, ensure_ascii=False,
@@ -71,7 +71,9 @@ def eio(out_dir='./', header=None, param=True,
             # 出力ディレクトリとファイル名の文字列を使って、実際に書き込む
             ## JSON用の書き込みメソッド
             def write_json(result, cnt=0):
-                if param:
+                if header_flag:
+                    result['_header'] = l_header
+                if param_flag:
                     result['_param'] = kargs
                 if process_time:
                     result['_process_time'] = process_time

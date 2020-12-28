@@ -57,14 +57,14 @@ class TestEIO(unittest.TestCase):
             elif ext == 'csv':
                 self.assertDf(pd.read_csv(file_path))
 
-    def make_sample(self, out_dir='./', header=None, param=True,
-        process_time=True, trace_back=False,
-        display=True, error_display=False,
-        sort_keys=True, ensure_ascii=False,
-        mkdir='off',
-        indent=4, default=support_numpy, tail_param=('_seed', )):
+    def make_sample(self, out_dir='./', header=None, param_flag=True, header_flag=True,
+                    process_time=True, trace_back=False,
+                    display=True, error_display=False,
+                    sort_keys=True, ensure_ascii=False,
+                    mkdir='off',
+                    indent=4, default=support_numpy, tail_param=('_seed', )):
 
-        @eio(out_dir=out_dir, header=header, param=param,
+        @eio(out_dir=out_dir, header=header, param_flag=param_flag, header_flag=header_flag,
              process_time=process_time, trace_back=trace_back,
              display=display, error_display=error_display,
              sort_keys=sort_keys, ensure_ascii=ensure_ascii,
@@ -185,7 +185,7 @@ class TestEIO(unittest.TestCase):
 
         # deep
         func_deep = self.make_sample(out_dir=mk_dir_path,
-                                        display=False, mkdir='deep')
+                                     display=False, mkdir='deep')
         func_deep(**self.param)
         deep_out_json_path = op.join(mk_dir_path, 'a=relu', 'hls=100_200', 'vf=0.1',
                                      'sample,a=relu,hls=100_200,vf=0.1,_s=2525.json')
