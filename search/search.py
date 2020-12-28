@@ -4,7 +4,7 @@ import pandas as pd
 import json
 
 def search(filepath_list, out_funcs=tuple(), types=(str, int, float),
-           param_key='_param', filename_key='_filename',
+           param_key='_param', filename_key='_filename', sep='|',
            head_columns=('_header',), tail_columns=('_process_time', '_filename'),
            target_df=None, display=False):
     if target_df is None: # 追加先のdf
@@ -37,12 +37,14 @@ def search(filepath_list, out_funcs=tuple(), types=(str, int, float),
             print('added ' + filepath)
 
     all_columns = set(target_df.columns)
-    out_columns = all_columns - params - set(head_columns) - set(tail_columns)
-    return pd.concat([target_df[list(head_columns)],
-                      target_df[sorted(params)],
-                      target_df[sorted(out_columns)],
-                      target_df[list(tail_columns)]], axis=1)
-
+    out_columns = all_columns - params - set(head_columns) - set(tail_columns) - set([sep])
+    out_df = target_df[list(head_columns)]
+    out_df = out_df.join(target_df[sorted(params)])
+    if sep is not None and sep != '':
+        out_df[sep] = sep
+    out_df = out_df.join(target_df[sorted(out_columns)])
+    out_df = out_df.join(target_df[list(tail_columns)])
+    return out_df
 
 if __name__ == '__main__':
     pass

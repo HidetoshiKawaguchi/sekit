@@ -18,6 +18,7 @@ if __name__ == '__main__':
     parser.add_argument('--filename_key', default='_filename')
     parser.add_argument('--head_columns', nargs='*', default=['_header'])
     parser.add_argument('--tail_columns', nargs='*', default=['_process_time', '_filename'])
+    parser.add_argument('--separator', default='|')
     parser.add_argument('--cache', default=None)
     args = parser.parse_args()
 
@@ -25,6 +26,7 @@ if __name__ == '__main__':
     df = search(args.filepath, display=args.display,
                 param_key=args.param_key,
                 filename_key=args.filename_key,
+                sep=args.separator,
                 head_columns=args.head_columns,
                 tail_columns=args.tail_columns,
                 target_df=target_df)
