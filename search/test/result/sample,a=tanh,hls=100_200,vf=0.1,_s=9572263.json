@@ -1,0 +1,20 @@
+{
+    "_header": "sample",
+    "_param": {
+        "_seed": 9572263,
+        "activation": "tanh",
+        "hidden_layer_sizes": [
+            100,
+            200
+        ],
+        "validation_fraction": 0.1
+    },
+    "_process_time": 3.647804260253906e-05,
+    "giro": [
+        300.06003349059097,
+        600.7424209654608
+    ],
+    "goro": "___tanh___",
+    "hoge": 601.3307510453315,
+    "piyo": 0.8231664619963743
+}

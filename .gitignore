@@ -1,0 +1,10 @@
+spartan/lib/__pycache__/*
+spartan/.spartan_config.yaml
+
+eio/__pycache__/*
+eio/sample/sample*.json
+eio/sample/sample*.csv
+eio/test/sample,*
+eio/test/test_mkdir/*
+
+search/__pycache__/*

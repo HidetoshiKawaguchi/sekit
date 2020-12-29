@@ -1,0 +1,12 @@
+{
+    "_header": "sample",
+    "_par": {
+        "_seed": 4715378,
+        "activation": "relu",
+        "hidden_layer_sizes": [
+            100,
+            200
+        ],
+        "validation_fraction": 0.1
+    }
+}

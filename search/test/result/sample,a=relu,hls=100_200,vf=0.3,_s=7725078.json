@@ -1,0 +1,20 @@
+{
+    "_header": "sample",
+    "_param": {
+        "_seed": 7725078,
+        "activation": "relu",
+        "hidden_layer_sizes": [
+            100,
+            200
+        ],
+        "validation_fraction": 0.3
+    },
+    "_process_time": 3.552436828613281e-05,
+    "giro": [
+        300.9704799678807,
+        600.0129129771454
+    ],
+    "goro": "___relu___",
+    "hoge": 601.192489761746,
+    "piyo": 1.7894016749495227
+}
