@@ -2,7 +2,7 @@
 from itertools import product
 import pandas as pd
 import numpy as np
-
+import random
 
 def _get_param_out(in_df, sep, ignore):
     param = []
@@ -48,9 +48,11 @@ def stats(in_df, sep='|', ignore=('_seed', '_filename'), count_key='_n',
         param_values = key.split(connector)
         row = {k:pv for k, pv in zip(param, param_values)}
         for out_k, sv in sampling_values.items():
+            ss = len(sv) if n_samples is None else min(n_samples, len(sv))
+            sv = random.sample(sv, ss)
             for s, f in stat_funcs:
                 row[out_k + s] = f(sv)
-            row[count_key] = len(sv)
+            row[count_key] = ss
         result_df = result_df.append(row, ignore_index=True)
 
     result_df[sep] = sep

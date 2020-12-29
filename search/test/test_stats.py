@@ -30,5 +30,11 @@ class TestSearch(unittest.TestCase):
         self.assertAlmostEqual(check_df['hoge(min)'][0], 600.206247323861)
         self.assertAlmostEqual(check_df['hoge(max)'][0], 601.498830434484)
 
+        # n_samplesを確かめる。
+        stats_df = stats(df, n_samples=2)
+        self.assertEqual(stats_df['_n'][0], 2)
+        stats_df = stats(df, n_samples=1000000)
+        self.assertEqual(stats_df['_n'][0], 3)
+
 if __name__ == '__main__':
     unittest.main()
