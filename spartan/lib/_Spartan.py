@@ -13,10 +13,18 @@ from ._ComputeNode import ComputeNode
 from ._SshComputeNode import SshComputeNode
 from ._Cluster import Cluster
 
+
+def _make_json_str(param:dict):
+    return '"' + json.dumps(param).replace('"', '\\"') + '"'
+
+def _make_argparse_str(param:dict):
+    return ' '.join('--{} {}'.format(k,v) for k, v in param.items())
+
 class SpartanController:
     def __init__(self,
                  hosts=({'hostname': 'localhost',
-                         'n_jobs': 1, 'interval': 1}, )):
+                         'n_jobs': 1, 'interval': 1}, ),
+                 mode='argparse'):
         compute_nodes = []
         for hst in hosts:
             hostname = hst['hostname']
@@ -32,6 +40,11 @@ class SpartanController:
             compute_nodes.append(cn)
         self.cluster = Cluster(compute_nodes=compute_nodes)
         self.config_filepath = ''
+        self.make_param_str = {
+            'argparse': _make_argparse_str,
+            'json': _make_json_str
+        }[mode.lower()]
+
 
     def setup_config(self, config_filepath):
         self.config_filepath = config_filepath
@@ -89,9 +102,7 @@ class SpartanController:
         for _, source in product(range(n_seeds), param_grid):
             for param in gen_param(source):
                 param[seed_key] = random.randrange(max_seed)
-                cmd = command + ' "' \
-                      + json.dumps(param).replace('"', '\\"') \
-                      + '"'
+                cmd = command + ' ' + self.make_param_str(param)
                 if maxsize > 0:
                     while self.cluster.qsize() >= maxsize:
                         self.wait(interval, display=display)
