@@ -42,6 +42,7 @@ goro-127999999.67022167 (a=0.8, b=goro, _seed=2397773)
 ```python
 # -*- coding: utf-8 -*-
 import sys, json, random
+from argparse import ArgumentParser
 
 def exe(a: float, b: str, _seed: int) -> str:
     random.seed(_seed)
@@ -53,23 +54,30 @@ def exe(a: float, b: str, _seed: int) -> str:
     return out
 
 if __name__ == '__main__':
-    param = json.loads(sys.argv[1])
-    a = param['a']
-    b = param['b']
-    _seed = param['_seed']
-    print(exe(a, b, _seed))
+    parser = ArgumentParser(description='')
+    parser.add_argument('json', nargs='*')
+    parser.add_argument('--a', type=float, default=0.1)
+    parser.add_argument('--b', type=str, default='hoge')
+    parser.add_argument('--_seed', type=int, default=3939)
+    args = parser.parse_args()
+    if len(args.json) > 0:
+        param = json.loads(args.json[0])
+    else:
+        param = args.__dict__
+        del param['json']
+    print(exe(**param))
 ```
 
 実験で実行したい処理（例えばシミュレーション）が書かれているものだと見立ててください。
 本体は`exe`メソッドで、引数は`a`,`b`,`_seed`です。
 `a`, `b`は実験用のパラメータで、`_seed`は疑似乱数生成のための乱数シードです。
 
-パラメータは、コマンドの引数にJSON形式で受け渡されます。
+パラメータは、コマンドの引数にargparser形式で受け渡されます。
 以下のように内部では実行されています。
 ```
-python sample/command.py "{\"a\": 0.1, \"b\": \"hoge\", \"_seed\": 5702596}"
+python sample/command.py --a 0.1 --b hoge --_seed 5702596
 ```
-Spartanは、このように自動で生成されたJSON形式のテキストを引数に受け渡す形で、コマンドを並列で実行していきます。
+Spartanは、このように自動で生成されたを引数に受け渡す形で、コマンドを並列で実行していきます。
 
 
 このようなコマンドが、以下の2つのパラメータの総当りが２回ずつ実行されました。
@@ -104,6 +112,7 @@ hosts:
   - {hostname: localhost, n_jobs: 4}
 option:
   n_seeds: 2
+#  mode: json
 #  maxsize: 7
 #  interval: 1
 #  config_filepath: .spartan_config.yaml
@@ -257,10 +266,11 @@ hosts:
 - `config_filepath`: Spartan実行中に、ホスト毎の並列実行数を変更するためのファイルのパス
 
 ### あまり設定しないと思われるオプション
+- `mode`: `argparse`か`json`のどちらかを設定します。デフォルトは`argparse`です。`json`と設定すると、コマンド実行時の引数をjson形式で生成します。例えば以下のとおりです。
+  - `python sample/command.py "{\"a\": 0.1, \"b\": \"hoge\", \"_seed\": 5702596}"`
 - `maxsize`: 内部でパラメータの組み合わせを保持する個数。あまりにもパラメータの組み合わせ数が多いときに100,1000などの数を設定してください。デフォルトだと、すべてのパラメータの組み合わせをメモリ上に保持します。
 - `interval`: Spartan実行時、各種処理の間隔。単位は秒。デフォルトは1秒
 - `display`: Spartanの実行中の状態を表示するかどうかを設定する。デフォルトは`true`で、表示される。
-
 
 
 ## 【開発者向け】注意
