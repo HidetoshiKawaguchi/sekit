@@ -13,9 +13,14 @@ def exe(a: float, b: str, _seed: int) -> str:
 
 if __name__ == '__main__':
     parser = ArgumentParser(description='')
+    parser.add_argument('json', nargs='*')
     parser.add_argument('--a', type=float, default=0.1)
     parser.add_argument('--b', type=str, default='hoge')
     parser.add_argument('--_seed', type=int, default=3939)
     args = parser.parse_args()
-
-    print(exe(**args.__dict__))
+    if len(args.json) > 0:
+        param = json.loads(args.json[0])
+    else:
+        param = args.__dict__
+        del param['json']
+    print(exe(**param))
