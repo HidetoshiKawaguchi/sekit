@@ -5,8 +5,8 @@ _base = op.join(op.dirname(op.abspath(__file__)), '..', '..')
 sys.path.append(_base)
 
 import pandas as pd
-from search import search
-from search import stats
+from search.lib import search
+from search.lib import stats
 
 class TestSearch(unittest.TestCase):
     def test_smoke(self):

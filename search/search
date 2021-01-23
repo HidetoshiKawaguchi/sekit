@@ -2,12 +2,11 @@
 # -*- coding: utf-8 -*-
 import sys, glob
 import os.path as op
-sys.path.append(op.join(op.dirname(op.abspath(__file__))))
 
 import pandas as pd
 from argparse import ArgumentParser
 
-from search import search
+from lib import search
 
 if __name__ == '__main__':
     parser = ArgumentParser(description='')

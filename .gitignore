@@ -10,5 +10,6 @@ eio/test/sample,*
 eio/test/test_mkdir/*
 
 search/__pycache__/*
+search/lib/__pycache__/*
 
 jymatplot/lib/__pycache__/*
