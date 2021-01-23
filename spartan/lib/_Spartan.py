@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-import os
+import os, sys
+import os.path as op
+sys.path.append(op.join(op.dirname(op.abspath(__file__)), '..', '..'))
+
 import json, yaml
 import random
 from queue import Queue
@@ -7,8 +10,8 @@ from itertools import product
 from time import sleep
 
 
+from utils import load_yaml_or_json
 from .gen_param import gen_param
-from .load_yaml_or_json import load_yaml_or_json
 from ._ComputeNode import ComputeNode
 from ._SshComputeNode import SshComputeNode
 from ._Cluster import Cluster

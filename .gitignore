@@ -1,3 +1,5 @@
+utils/__pycache__/*
+
 spartan/lib/__pycache__/*
 spartan/.spartan_config.yaml
 
