@@ -2,6 +2,20 @@
 import copy
 import matplotlib.pyplot as plt
 
+
+class Markers:
+    def __init__(self):
+        self.markers = [",", "o", "v", "^", "<", ">", "D", "p", "*"]
+        self.index = 0
+
+    def next(self):
+        out = self.markers[self.index]
+        self.index += 1
+        if self.index == len(self.markers):
+            self.index = 0
+        return out
+
+
 def simple_matplot(param:dict,
                    figsize:tuple = None,
                    dpi:int = None,
@@ -29,10 +43,13 @@ def simple_matplot(param:dict,
     if grid is not None:
         del param['grid']
 
+    markers = Markers()
     ax = fig.add_subplot(111, **param)
     for p in plots:
         method = p.get('method', 'plot')
         del p['method']
+        if not 'marker' in p:
+            p['marker'] = markers.next()
         if method == 'plot':
             x, y = p['x'], p['y']
             del p['x']
