@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 import os.path as op
+from itertools import chain
+from glob import glob
 import pandas as pd
 import json
 
-def search(filepath_list, out_funcs=tuple(), types=(str, int, float),
+def search(filepath_list, dir=None,
+           out_funcs=tuple(), types=(str, int, float),
            param_key='_param', filename_key='_filename', sep='|',
            head_columns=('_header',), tail_columns=('_process_time', '_filename'),
            target_df=None, display=False):
@@ -12,6 +15,8 @@ def search(filepath_list, out_funcs=tuple(), types=(str, int, float),
         cached_filepath_set = set()
     else:
         cached_filepath_set = set(target_df[filename_key])
+    if dir is not None:
+        filepath_list = chain(glob(op.join(dir, '*.json')), filepath_list)
 
     params = set()
     for filepath in filepath_list:
