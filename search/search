@@ -2,16 +2,16 @@
 # -*- coding: utf-8 -*-
 import sys, glob
 import os.path as op
-sys.path.append(op.join(op.dirname(op.abspath(__file__))))
 
 import pandas as pd
 from argparse import ArgumentParser
 
-from search import search
+from lib import search
 
 if __name__ == '__main__':
     parser = ArgumentParser(description='')
     parser.add_argument('filepath', nargs='*')
+    parser.add_argument('--dir', default=None)
     parser.add_argument('--display', action='store_true')
     parser.add_argument('-o', '--output', default=sys.stdout)
     parser.add_argument('--param_key', default='_param')
@@ -23,7 +23,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     target_df = None if args.cache is None else pd.read_csv(args.cache)
-    df = search(args.filepath, display=args.display,
+    df = search(args.filepath, dir=args.dir,
+                display=args.display,
                 param_key=args.param_key,
                 filename_key=args.filename_key,
                 sep=args.separator,
