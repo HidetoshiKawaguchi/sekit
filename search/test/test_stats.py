@@ -4,6 +4,7 @@ import os.path as op
 _base = op.join(op.dirname(op.abspath(__file__)), '..', '..')
 sys.path.append(_base)
 
+import numpy as np
 import pandas as pd
 from search.lib import search
 from search.lib import stats
@@ -35,6 +36,18 @@ class TestSearch(unittest.TestCase):
         self.assertEqual(stats_df['_n'][0], 2)
         stats_df = stats(df, n_samples=1000000)
         self.assertEqual(stats_df['_n'][0], 3)
+
+
+    def test_sampling(self):
+        filepath = op.join(op.dirname(op.abspath(__file__)), 'test_sample_for_sampling.csv')
+        raw_df = pd.read_csv(filepath, index_col=0)
+        for _ in range(10):
+            df = stats(raw_df, ignore=('_seed', ), n_samples=3,
+                       stat_funcs=(('(ave)', lambda v: round(np.average(v), 4)),))
+            flag = all((df['hoge(ave)'] == df['goro(ave)']) & \
+                       (df['goro(ave)'] == df['piyo(ave)']))
+            self.assertTrue(flag)
+
 
 if __name__ == '__main__':
     unittest.main()
