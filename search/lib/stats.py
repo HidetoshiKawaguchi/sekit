@@ -19,6 +19,23 @@ def _get_param_out(in_df, sep, ignore):
                 outkey.append(c)
     return param, outkey
 
+def _sample(in_df, param, n_samples, connector='_________'):
+    # パラメータの組み合わせ毎にindexを収集する
+    sample_dict = dict()
+    for index, row in in_df[param].iterrows():
+        param_hash = connector.join(str(row[p]) for p in param)
+        if param_hash not in sample_dict.keys():
+            sample_dict[param_hash] = []
+        sample_dict[param_hash].append(index)
+
+    # パラメータの組み合わせ毎にindexをサンプリングする
+    sampled_indices = set()
+    for key, indices in sample_dict.items():
+        ss =  min(len(indices), n_samples)
+        sampled_indices = sampled_indices | set(random.sample(indices, ss))
+    return in_df[in_df.index.isin(sampled_indices)]
+
+
 def _compile(in_df, param, outkey, connector='_________'):
     stats_dict = dict()
     for _, row in in_df.iterrows():
@@ -32,13 +49,18 @@ def _compile(in_df, param, outkey, connector='_________'):
 def stats(in_df, sep='|', ignore=('_seed', '_filename'), count_key='_n',
           stat_funcs=(('(ave)', np.average), ('(std)', np.std), ('(min)', np.min), ('(max)', np.max)),
           n_samples=None):
+    connector='_________'
+
     # パラメータと出力の取得
     param, outkey = _get_param_out(in_df, sep, ignore)
     dtypes = {k:v for k, v in in_df.dtypes.items() if k in param}
     ## dtypesは最後に出力のdfの型を保持するために必要
 
+    # n_samplesを基にサンプリング
+    if not n_samples is None and n_samples > 0:
+        in_df = _sample(in_df, param, n_samples, connector=connector)
+
     # dictに集計
-    connector = '_________' # 本当はなくてもいいような処理にしたいが、時間がかかるので今はおいておく
     stats_dict = _compile(in_df, param, outkey, connector=connector)
 
     # dfに集計
@@ -48,11 +70,9 @@ def stats(in_df, sep='|', ignore=('_seed', '_filename'), count_key='_n',
         param_values = key.split(connector)
         row = {k:pv for k, pv in zip(param, param_values)}
         for out_k, sv in sampling_values.items():
-            ss = len(sv) if n_samples is None else min(n_samples, len(sv))
-            sv = random.sample(sv, ss)
             for s, f in stat_funcs:
                 row[out_k + s] = f(sv)
-            row[count_key] = ss
+            row[count_key] = len(sv)
         result_df = result_df.append(row, ignore_index=True)
 
     result_df[sep] = sep
