@@ -1,15 +1,17 @@
-title: The Graph
-xlabel: XXX
-ylabel: YYY
-xlim: [0, 6]
-ylim: [0, 6]
-aspect: equal
-grid:
-  color: "#DDDDDD"
-legend:
-  bbox_to_anchor: [1.05, 1.0]
-  loc: "upper left"
+__init__:
+  title: The Graph
+  xlabel: XXX
+  ylabel: YYY
+  xlim: [0, 6]
+  ylim: [0, 6]
+  aspect: equal
 plots:
   - {x: [1, 2, 3], y: [1, 3, 5], label: hoge, method: scatter}
   - {x: [0.5, 2.0, 4.0], y: [0.5, 0.4, 0.35], label: goro, method: scatter}
   - {x: [2, 3, 4], y: [1, 2, 5], label: piyo, method: plot, linewidth: 10.0}
+grid:
+  color: "#DDDDDD"
+set_axisbelow: True
+legend:
+  bbox_to_anchor: [1.05, 1.0]
+  loc: "upper left"
