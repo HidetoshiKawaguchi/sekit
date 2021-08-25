@@ -1,16 +1,11 @@
 {
-    "title": "The Graph",
-    "xlabel": "XXX",
-    "ylabel": "YYY",
-    "xlim": [0, 6],
-    "ylim": [0, 6],
-    "aspect": "equal",
-    "grid": {
-        "color": "#DDDDDD"
-    },
-    "legend": {
-        "bbox_to_anchor": [1.05, 1],
-        "loc": "upper left"
+    "__init__": {
+        "title": "The Graph",
+        "xlabel": "XXX",
+        "ylabel": "YYY",
+        "xlim": [0, 6],
+        "ylim": [0, 6],
+        "aspect": "equal"
     },
     "plots": [
         {
@@ -32,5 +27,13 @@
             "method": "plot",
             "linewidth": 10
         }
-    ]
+    ],
+    "grid": {
+        "color": "#DDDDDD"
+    },
+    "set_axisbelow": true,
+    "legend": {
+        "bbox_to_anchor": [1.05, 1],
+        "loc": "upper left"
+    }
 }

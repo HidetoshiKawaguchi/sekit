@@ -1,5 +1,5 @@
 # jymatplot
-jymatplotは、グラフ描画Pythonライブラリの matplotlib のラッパーです。グラフの情報を、指定の様式のJSONかYAMLとして受け取り、png 画像として保存する機能を有します。matplotlibで描画するときは、描画用の Pythonスクリプトを記述する必要がありますが、JSONかYAMLで記述することが可能になります。別の言い方をすれば、グラフ内のデータと処理を分離することが可能となります。
+jymatplotは、グラフ描画Pythonライブラリの matplotlib のラッパーです。グラフの情報を、指定の様式のJSONかYAMLとして受け取り、画像として保存する機能を有します。matplotlibで描画するときは、描画用の Pythonスクリプトを記述する必要がありますが、JSONかYAMLで記述することが可能になります。別の言い方をすれば、グラフ内のデータと処理を分離することが可能となります。
 
 ## まず動かしてみる
 1. このREADME.md があるディレクトリに移動する
@@ -13,36 +13,45 @@ cat samples/sample1.yaml | ./jymatplot --output sample1.png
 ## 入力の形式
 2.のコマンドは、`sample1.yaml`というグラフ描画の情報を入力として、`sample1.png` に保存をしています。`sample1.yaml`の中身は以下の通りになっています。
 ```yaml
-title: The Graph
-xlabel: XXX
-ylabel: YYY
-xlim: [0, 6]
-ylim: [0, 6]
-aspect: equal
-grid:
-  color: "#DDDDDD"
-legend:
-  bbox_to_anchor: [1.05, 1.0]
-  loc: "upper left"
+__init__:
+  title: The Graph
+  xlabel: XXX
+  ylabel: YYY
+  xlim: [0, 6]
+  ylim: [0, 6]
+  aspect: equal
 plots:
   - {x: [1, 2, 3], y: [1, 3, 5], label: hoge, method: scatter}
   - {x: [0.5, 2.0, 4.0], y: [0.5, 0.4, 0.35], label: goro, method: scatter}
   - {x: [2, 3, 4], y: [1, 2, 5], label: piyo, method: plot, linewidth: 10.0}
-```
 
-各キーの説明は以下の通りです。基本的には、`plots`以外はmatplotlibの設定項目と同じです。`plots` 以外は省略することが可能です。
-- `title`: グラフ上部に設定してあるグラフの題名です。
-- `xlabel`: X軸の名前
-- `ylabel`: Y軸の名前
-- `xlim`: X軸の最小値と最大値を指定している。(`[最小値, 最大値]`)
-- `ylim`: Y軸の最小値と最大値を指定している。(`[最小値, 最大値]`)
-- `aspect`: グラフのアスペクト比を指定している。サンプルでは`equal`として、縦と横の比率が同じに設定してある。
+grid:
+  color: "#DDDDDD"
+set_axisbelow: True
+legend:
+  bbox_to_anchor: [1.05, 1.0]
+  loc: "upper left"
+```
+キーは主に以下の３種類に分類できます。
+- `__init__`: 図の初期化パラメータを指定します。Figureクラスの`add_subplot`メソッドでAxesインスタンスを設定する際に反映されます。
+- `plots`: 点や線の描画について指定します。詳細は後述します。
+- それ以外: Axesインスタンスのメソッド名をキーとして、値はパラメータとなります。オブジェクト・リスト・数値・文字列と何でも指定出来ます。
+
+各キーの説明は以下の通りです。基本的には、`plots`以外はmatplotlibのAxesクラスの設定項目と同じです。`plots` 以外は省略することが可能です。
+- `__init__`:
+  - `title`: グラフ上部に設定してあるグラフの題名です。
+  - `xlabel`: X軸の名前
+  - `ylabel`: Y軸の名前
+  - `xlim`: X軸の最小値と最大値を指定している。(`[最小値, 最大値]`)
+  - `ylim`: Y軸の最小値と最大値を指定している。(`[最小値, 最大値]`)
+  - `aspect`: グラフのアスペクト比を指定している。サンプルでは`equal`として、縦と横の比率が同じに設定してある。
+- `plots`: (詳細は後述)
 - `grid`: グリッド線に関する情報を指定している。
   - `color`: サンプルでは、グリッド線の色をRGB値で指定している。
+- `set_axisbelow`: グリッド線を背景側に持っていくかどうか。True か Falseで指定。
 - `legend`: 凡例を表示することに関する情報を指定している。
   - bbox_to_anchor: 凡例の位置を示します。図全体の左下を(0,0)、右上を(1,1)とした時の相対値で指定します。
   - loc: 凡例の基準位置を指定します。`upper left`の場合は、凡例の枠線の左上の点が基準点となります。
-- `plots`: 点や線の描画について指定します。詳細は後述します。
 
 ### 点や線の描画(Plots)
 点や線の情報は、`Plots`をキーとして、リスト形式で指定します。リストの一要素が、凡例一つに対応します。上述した、`sample1.yaml`から抜き出した以下の部分です。
@@ -65,18 +74,13 @@ plots:
 上述したサンプルでは、YAML形式のファイルを入力としましたが、JSONでも実行可能です。例えば、`sample1.yaml`をJSON形式で記述したものは以下の通りとなります。
 ```json
 {
-    "title": "The Graph",
-    "xlabel": "XXX",
-    "ylabel": "YYY",
-    "xlim": [0, 6],
-    "ylim": [0, 6],
-    "aspect": "equal",
-    "grid": {
-        "color": "#DDDDDD"
-    },
-    "legend": {
-        "bbox_to_anchor": [1.05, 1],
-        "loc": "upper left"
+    "__init__": {
+        "title": "The Graph",
+        "xlabel": "XXX",
+        "ylabel": "YYY",
+        "xlim": [0, 6],
+        "ylim": [0, 6],
+        "aspect": "equal"
     },
     "plots": [
         {
@@ -98,11 +102,17 @@ plots:
             "method": "plot",
             "linewidth": 10
         }
-    ]
+    ],
+    "grid": {
+        "color": "#DDDDDD"
+    },
+    "set_axisbelow": true,
+    "legend": {
+        "bbox_to_anchor": [1.05, 1],
+        "loc": "upper left"
+    }
 }
 ```
-
-
 
 ## オプション
 - `-i` or `--input`: 入力となるYAMLかJSONファイルのパス。省略した場合は標準入力からYAML形式もしくはJSON形式のテキストを受け取る。上述したサンプルでは、指定していない。
@@ -117,5 +127,6 @@ saved a plot file, ./full_options.png
 ```
 
 # 注意
-作者自身がmatplotlibの把握しきれていないので、シンプルな機能しか実装されていません。込み入った画像描画はおそらく出来ないことにご注意ください。
-
+- 作者自身がmatplotlibの把握しきれていないので、シンプルな機能しか実装されていません。込み入った画像描画はおそらく出来ないことにご注意ください。
+- ある程度、matplotlib の使い方に慣れている向けです。
+- アップデートは、**後方互換は考慮せずに**不定期に実施されます。(masterのドキュメントは更新します)

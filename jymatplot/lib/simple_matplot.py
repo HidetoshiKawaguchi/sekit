@@ -16,6 +16,9 @@ class Markers:
         return out
 
 
+_init_key = '__init__'
+_plots_key = 'plots'
+_special_keys = {_init_key, _plots_key}
 def simple_matplot(param:dict,
                    figsize:tuple = None,
                    dpi:int = None,
@@ -33,19 +36,9 @@ def simple_matplot(param:dict,
                      tight_layout=tight_layout,
                      constrained_layout=constrained_layout)
 
-    plots = param.get('plots', [])
-    del param['plots']
-
-    legend = param.get('legend', None)
-    if legend is not None:
-        del param['legend']
-    grid = param.get('grid', None)
-    if grid is not None:
-        del param['grid']
-
     markers = Markers()
-    ax = fig.add_subplot(111, **param)
-    for p in plots:
+    ax = fig.add_subplot(111, **param.get(_init_key, dict()))
+    for p in param.get(_plots_key, []):
         method = p.get('method', 'plot')
         del p['method']
         if not 'marker' in p:
@@ -57,11 +50,14 @@ def simple_matplot(param:dict,
             ax.plot(x, y, **p)
         else:
             getattr(ax, method)(**p)
-
-    if legend is not None:
-        ax.legend(**legend)
-    if grid is not None:
-        ax.grid(**grid)
-        ax.set_axisbelow(True)
-
+    for k, p in param.items():
+        if k in _special_keys:
+            continue
+        call = getattr(ax, k)
+        if type(p) == dict:
+            call(**p)
+        elif type(p) == list:
+            call(*p)
+        else:
+            call(p)
     return fig
