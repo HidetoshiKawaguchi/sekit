@@ -53,8 +53,10 @@ def stats(in_df, sep='|', ignore=('_seed', '_filename'), count_key='_n',
 
     # パラメータと出力の取得
     param, outkey = _get_param_out(in_df, sep, ignore)
-    dtypes = {k:v for k, v in in_df.dtypes.items() if k in param}
-    ## dtypesは最後に出力のdfの型を保持するために必要
+    dtypes = {k:v for k, v in in_df.dtypes.items() if k in param and v != bool}
+    bool_params = {k for k, v in in_df.dtypes.items() if k in param and v == bool}
+    ## dtypesは最後に出力のdfの型を保持するために必要．ただし，bool型以外
+    ## bool_paramsは，bool型のパラメータ．最後まとめていると，bool型が全てTrueに変換されてしまうため，特別な処理が必要
 
     # n_samplesを基にサンプリング
     if not n_samples is None and n_samples > 0:
@@ -77,4 +79,7 @@ def stats(in_df, sep='|', ignore=('_seed', '_filename'), count_key='_n',
 
     result_df[sep] = sep
     result_df = result_df.astype(dtypes)
+    for bool_param in bool_params:
+        # ここが曲者．astypeでまとめてboolに戻すと元がboolの列は全ての値がTrueになってしまう．
+        result_df[bool_param] = result_df[bool_param].map(lambda p: p == 'True')
     return result_df
