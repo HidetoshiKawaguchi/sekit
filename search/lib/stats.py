@@ -15,7 +15,7 @@ def _get_param_out(in_df, sep, ignore):
         if not c in ignore:
             if param_flag:
                 param.append(c)
-            elif param_flag is False and in_df[c].dtype == np.float64:
+            elif param_flag is False and (in_df[c].dtype == np.float64 or in_df[c].dtype == np.int64):
                 outkey.append(c)
     return param, outkey
 
@@ -53,8 +53,10 @@ def stats(in_df, sep='|', ignore=('_seed', '_filename'), count_key='_n',
 
     # パラメータと出力の取得
     param, outkey = _get_param_out(in_df, sep, ignore)
-    dtypes = {k:v for k, v in in_df.dtypes.items() if k in param}
-    ## dtypesは最後に出力のdfの型を保持するために必要
+    dtypes = {k:v for k, v in in_df.dtypes.items() if k in param and v != bool}
+    bool_params = {k for k, v in in_df.dtypes.items() if k in param and v == bool}
+    ## dtypesは最後に出力のdfの型を保持するために必要．ただし，bool型以外
+    ## bool_paramsは，bool型のパラメータ．最後まとめていると，bool型が全てTrueに変換されてしまうため，特別な処理が必要
 
     # n_samplesを基にサンプリング
     if not n_samples is None and n_samples > 0:
@@ -66,6 +68,7 @@ def stats(in_df, sep='|', ignore=('_seed', '_filename'), count_key='_n',
     # dfに集計
     stat_outkey = ['{}{}'.format(o, sf[0]) for o, sf in product(outkey, stat_funcs)]
     result_df = pd.DataFrame(columns=param + [count_key, sep] + stat_outkey)
+    row_list = []
     for key, sampling_values in stats_dict.items():
         param_values = key.split(connector)
         row = {k:pv for k, pv in zip(param, param_values)}
@@ -73,8 +76,12 @@ def stats(in_df, sep='|', ignore=('_seed', '_filename'), count_key='_n',
             for s, f in stat_funcs:
                 row[out_k + s] = f(sv)
             row[count_key] = len(sv)
-        result_df = result_df.append(row, ignore_index=True)
+        row_list.append(row)
+    result_df = pd.concat([result_df, pd.DataFrame(row_list)], ignore_index=True)
 
     result_df[sep] = sep
     result_df = result_df.astype(dtypes)
+    for bool_param in bool_params:
+        # ここが曲者．astypeでまとめてboolに戻すと元がboolの列は全ての値がTrueになってしまう．
+        result_df[bool_param] = result_df[bool_param].map(lambda p: p == 'True')
     return result_df
