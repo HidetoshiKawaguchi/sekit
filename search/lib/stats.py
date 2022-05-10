@@ -68,6 +68,7 @@ def stats(in_df, sep='|', ignore=('_seed', '_filename'), count_key='_n',
     # dfに集計
     stat_outkey = ['{}{}'.format(o, sf[0]) for o, sf in product(outkey, stat_funcs)]
     result_df = pd.DataFrame(columns=param + [count_key, sep] + stat_outkey)
+    row_list = []
     for key, sampling_values in stats_dict.items():
         param_values = key.split(connector)
         row = {k:pv for k, pv in zip(param, param_values)}
@@ -75,7 +76,8 @@ def stats(in_df, sep='|', ignore=('_seed', '_filename'), count_key='_n',
             for s, f in stat_funcs:
                 row[out_k + s] = f(sv)
             row[count_key] = len(sv)
-        result_df = result_df.append(row, ignore_index=True)
+        row_list.append(row)
+    result_df = pd.concat([result_df, pd.DataFrame(row_list)], ignore_index=True)
 
     result_df[sep] = sep
     result_df = result_df.astype(dtypes)

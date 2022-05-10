@@ -19,6 +19,7 @@ def search(filepath_list, dir=None,
         filepath_list = chain(glob(op.join(dir, '*.json')), filepath_list)
 
     params = set()
+    row_list = []
     for filepath in filepath_list:
         if op.basename(filepath) in cached_filepath_set:
             if display:
@@ -37,9 +38,10 @@ def search(filepath_list, dir=None,
         row_dict[filename_key] = op.basename(filepath)
         for k, func in out_funcs:
             row_dict[k] = func(result)
-        target_df = target_df.append(row_dict, ignore_index=True)
+        row_list.append(row_dict)
         if display:
             print('added ' + filepath)
+    target_df = pd.concat([target_df, pd.DataFrame(row_list)], ignore_index=True)
 
     all_columns = set(target_df.columns)
     out_columns = all_columns - params - set(head_columns) - set(tail_columns) - set([sep])
