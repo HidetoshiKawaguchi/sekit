@@ -15,7 +15,7 @@ def _get_param_out(in_df, sep, ignore):
         if not c in ignore:
             if param_flag:
                 param.append(c)
-            elif param_flag is False and in_df[c].dtype == np.float64:
+            elif param_flag is False and (in_df[c].dtype == np.float64 or in_df[c].dtype == np.int64):
                 outkey.append(c)
     return param, outkey
 
