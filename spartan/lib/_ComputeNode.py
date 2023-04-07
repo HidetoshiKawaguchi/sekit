@@ -13,6 +13,7 @@ from threading import current_thread
 from queue import Empty
 from subprocess import Popen
 
+from collections import OrderedDict
 
 class ComputeNodeThread(Thread):
     def __init__(self, p_cn, timeout=1, name='Thread'):
@@ -26,9 +27,17 @@ class ComputeNodeThread(Thread):
             while self._continue:
                 try:
                     self.cmd = self.p_cn.q_commands.get(timeout=self.timeout)
+                    gpu = None
+                    if len(self.p_cn.gpu_state) > 0:
+                        # このタイミングでgpu_stateが変わる可能性あり
+                        gpu_key, gpu = self.p_cn.allocate_gpu()
+                        if gpu is not None:
+                            self.cmd += ' --{} {}'.format(gpu_key, gpu)
                     proc = self.exe_command()
                     proc.wait()
                     self.cmd = None # 実行完了後にNoneにして終わった合図
+                    if gpu is not None:
+                        self.p_cn.release_gpu(gpu)
                     # 同時実行ジョブ数に変更があった場合の処理
                     with self.p_cn.lock:
                         if len(self.p_cn.threads) > self.p_cn.n_jobs:
@@ -52,10 +61,14 @@ class ComputeNode:
     """ localhost内で復数のプロセスを並列実行するためのクラス。
     """
     def __init__(self, n_jobs=1, interval=1,
+                 gpu=None, gpu_key='_gpu',
                  thread_name='localhost'):
         # self.commands = commands
         self.n_jobs = n_jobs
         self.interval = interval
+        gpu = [] if gpu is None else gpu
+        self.gpu_state = OrderedDict([[g, 0] for g in gpu])
+        self.gpu_key = gpu_key
         self.hostname='localhost'
         self.thread_name = thread_name
         self.lock = Lock()
@@ -111,6 +124,31 @@ class ComputeNode:
             self.n_jobs = n_jobs
             while len(self.threads) < self.n_jobs:
                 self._start_thread(index=len(self.threads))
+
+    def change_gpu_state(self, gpus):
+        with self.lock:
+            tmp_gpu_state = OrderedDict([[g, 0] for g in gpus])
+            for g, v in self.gpu_state.items():
+                tmp_gpu_state[g] = v
+            self.gpu_state = tmp_gpu_state
+
+    def allocate_gpu(self):
+        allocated_gpu = None
+        with self.lock:
+            min_value = min(self.gpu_state.values())
+            for gpu, v in self.gpu_state.items():
+                if v == min_value:
+                    allocated_gpu = gpu
+                    break
+            self.gpu_state[allocated_gpu] += 1
+        # print('---', self.gpu_state)
+        return self.gpu_key, allocated_gpu
+
+    def release_gpu(self, gpu):
+        with self.lock:
+            if gpu in self.gpu_state:
+                value = self.gpu_state[gpu] - 1
+                self.gpu_state[gpu] = max(0, value)
 
     def kill_all(self):
         with self.lock:

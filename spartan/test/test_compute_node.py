@@ -15,7 +15,7 @@ from lib import ComputeNode
 class TestComputeNode(unittest.TestCase):
     def test_compute_node(self):
         ### テストに必要な情報
-        host_n_cpu = 8
+        host_n_cpu = 10
         commands = ['hostname', 'ls'] #何でも良い
 
         #### ローカルホスト
@@ -41,6 +41,15 @@ class TestComputeNode(unittest.TestCase):
         for filepath in filepath_list:
             self.assertTrue(os.path.exists(filepath))
             os.remove(filepath)
+
+    def test_gpu(self):
+        cn = ComputeNode(n_jobs=3, gpu=['cuda:0', 'cuda:1'])
+        commands = ['sleep 1; echo '] * 5
+        q_commands = Queue()
+        for c in commands:
+            q_commands.put(c)
+        cn.start(q_commands)
+        cn.wait_all()
 
 
 if __name__ == '__main__':

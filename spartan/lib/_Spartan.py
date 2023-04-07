@@ -33,13 +33,16 @@ class SpartanController:
             hostname = hst['hostname']
             n_jobs = hst.get('n_jobs', 1)
             interval = hst.get('interval', 1)
+            gpu = hst.get('gpu', [])
             if hostname == 'localhost':
                 cn = ComputeNode(n_jobs=n_jobs,
-                                 interval=interval)
+                                 interval=interval,
+                                 gpu=gpu)
             else:
                 cn = SshComputeNode(hostname=hostname,
                                     n_jobs=n_jobs,
-                                    interval=interval)
+                                    interval=interval,
+                                    gpu=gpu)
             compute_nodes.append(cn)
         self.cluster = Cluster(compute_nodes=compute_nodes)
         self.config_filepath = ''

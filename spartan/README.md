@@ -190,6 +190,32 @@ option:
 実行結果は、コンピュータ1台での使い方、の例と同じようなものが表示されるはずです。
 
 ## その他機能
+### GPUの利用
+実験にGPUを使いたい場合があります。コンピュータ1台にGPUが2台以上ある場合、それらの割り振りも管理しながら実行する場合の機能も搭載しています。
+例えば、以下のようにhosts内のホスト毎に`gpu`をキーとして、GPUの識別名のリストを値として設定します。
+```yaml
+command: python sample/command_gpu.py
+param_grid:
+  - {a: [0.1, 0.5, 0.8], b: [hoge, goro]}
+  - {a: [0.3, 0.4], b: [piyo]}
+hosts:
+  - {hostname: localhost, n_jobs: 5, gpu: [cuda:0, cuda:1]}
+option:
+  n_seeds: 2
+```
+ここでは、CUDAに対応したGPUが2台搭載されたコンピュータをlocalhostとして実行する場合を想定しています。
+2代のGPUそれぞれの識別子を`cuda:0`と`cuda:1`とします。
+このように実行することで、以下の5つのコマンドが最初に同時実行されます。
+
+- `python sample/command_gpu.py --a 0.1 --b hoge --_seed 3705792 --_gpu cuda:0`
+- `python sample/command_gpu.py --a 0.1 --b goro --_seed 2599545 --_gpu cuda:1`
+- `python sample/command_gpu.py --a 0.5 --b hoge --_seed 5658655 --_gpu cuda:0`
+- `python sample/command_gpu.py --a 0.5 --b goro --_seed 1910151 --_gpu cuda:1`
+- `python sample/command_gpu.py --a 0.8 --b hoge --_seed 1910151 --_gpu cuda:1`
+
+`cuda:0`と`cuda:1`が割り振られます。この時、1台のGPUに割り振りが集中せず、分散されるように割り振られます。例えば、`cuda:0`が2つのジョブに割り振られている状態で、`cuda:0`が割り振られることはなく、`cuda:1`が割り振られます。`n_jobs`の数がGPUの識別子の数で割り切れない場合、リストの先頭にあるものに優先的に割り当てられます。
+
+
 ### 実行中の設定変更
 Spartanは実行中に、並列実行数を変更することが可能です。
 そのためには、設定ファイルの`option`に`config_filepath`を設定してください。
