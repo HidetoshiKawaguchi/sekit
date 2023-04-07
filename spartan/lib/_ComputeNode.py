@@ -129,7 +129,8 @@ class ComputeNode:
         with self.lock:
             tmp_gpu_state = OrderedDict([[g, 0] for g in gpus])
             for g, v in self.gpu_state.items():
-                tmp_gpu_state[g] = v
+                if g in tmp_gpu_state:
+                    tmp_gpu_state[g] = v
             self.gpu_state = tmp_gpu_state
 
     def allocate_gpu(self):

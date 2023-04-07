@@ -58,7 +58,8 @@ class SpartanController:
         initial_config = {'hosts': [
             {'hostname': cn.hostname,
              'n_jobs': cn.n_jobs,
-             'interval': cn.interval}
+             'interval': cn.interval,
+             'gpu': list(cn.gpu_state.keys())}
             for cn in self.cluster.compute_nodes
         ]}
         with open(self.config_filepath, 'w') as f:
@@ -78,9 +79,11 @@ class SpartanController:
                     continue
                 n_jobs = hst.get('n_jobs', None)
                 interval = hst.get('interval', None)
+                gpus = hst.get('gpu', None)
                 self.cluster.update_compute_node(hostname,
                                                  n_jobs,
-                                                 interval)
+                                                 interval,
+                                                 gpus)
             if display:
                 print("updated {} config.".format(hostname))
         except Exception as e:

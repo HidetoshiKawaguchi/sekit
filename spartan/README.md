@@ -201,7 +201,7 @@ param_grid:
 hosts:
   - {hostname: localhost, n_jobs: 5, gpu: [cuda:0, cuda:1]}
 option:
-  n_seeds: 2
+  n_seeds: 5
 ```
 ここでは、CUDAに対応したGPUが2台搭載されたコンピュータをlocalhostとして実行する場合を想定しています。
 2代のGPUそれぞれの識別子を`cuda:0`と`cuda:1`とします。

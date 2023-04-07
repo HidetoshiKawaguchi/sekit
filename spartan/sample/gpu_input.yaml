@@ -5,9 +5,9 @@ param_grid:
 hosts:
   - {hostname: localhost, n_jobs: 5, gpu: [cuda:0, cuda:1]}
 option:
-  n_seeds: 2
-  mode: json
+  n_seeds: 5
+#  mode: json
 #  maxsize: 7
 #  interval: 1
-  config_filepath: .spartan_config.yaml
+#  config_filepath: .spartan_config.yaml
 #  display: true
