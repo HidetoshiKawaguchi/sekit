@@ -192,14 +192,14 @@ option:
 ## その他機能
 ### GPUの利用
 実験にGPUを使いたい場合があります。コンピュータ1台にGPUが2台以上ある場合、それらの割り振りも管理しながら実行する場合の機能も搭載しています。
-例えば、以下のようにhosts内のホスト毎に`gpu`をキーとして、GPUの識別名のリストを値として設定します。
+例えば、以下のようにhosts内のホスト毎に`device`をキーとして、GPUの識別名のリストを値として設定します。
 ```yaml
-command: python sample/command_gpu.py
+command: python sample/command_cuda.py
 param_grid:
   - {a: [0.1, 0.5, 0.8], b: [hoge, goro]}
   - {a: [0.3, 0.4], b: [piyo]}
 hosts:
-  - {hostname: localhost, n_jobs: 5, gpu: [cuda:0, cuda:1]}
+  - {hostname: localhost, n_jobs: 5, device: [cuda:0, cuda:1]}
 option:
   n_seeds: 5
 ```
@@ -207,11 +207,11 @@ option:
 2代のGPUそれぞれの識別子を`cuda:0`と`cuda:1`とします。
 このように実行することで、以下の5つのコマンドが最初に同時実行されます。
 
-- `python sample/command_gpu.py --a 0.1 --b hoge --_seed 3705792 --_gpu cuda:0`
-- `python sample/command_gpu.py --a 0.1 --b goro --_seed 2599545 --_gpu cuda:1`
-- `python sample/command_gpu.py --a 0.5 --b hoge --_seed 5658655 --_gpu cuda:0`
-- `python sample/command_gpu.py --a 0.5 --b goro --_seed 1910151 --_gpu cuda:1`
-- `python sample/command_gpu.py --a 0.8 --b hoge --_seed 1910151 --_gpu cuda:1`
+- `python sample/command_cuda.py --a 0.1 --b hoge --_seed 3705792 --_device cuda:0`
+- `python sample/command_cuda.py --a 0.1 --b goro --_seed 2599545 --_device cuda:1`
+- `python sample/command_cuda.py --a 0.5 --b hoge --_seed 5658655 --_device cuda:0`
+- `python sample/command_cuda.py --a 0.5 --b goro --_seed 1910151 --_device cuda:1`
+- `python sample/command_cuda.py --a 0.8 --b hoge --_seed 1910151 --_device cuda:1`
 
 `cuda:0`と`cuda:1`が割り振られます。この時、1台のGPUに割り振りが集中せず、分散されるように割り振られます。例えば、`cuda:0`が2つのジョブに割り振られている状態で、`cuda:0`が割り振られることはなく、`cuda:1`が割り振られます。`n_jobs`の数がGPUの識別子の数で割り切れない場合、リストの先頭にあるものに優先的に割り当てられます。
 

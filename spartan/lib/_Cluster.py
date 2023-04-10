@@ -55,15 +55,15 @@ class Cluster():
                 return cn
 
     def update_compute_node(self, hostname,
-                            n_jobs=None, interval=None, gpus=None):
+                            n_jobs=None, interval=None, devices=None):
         compute_node = self.search_conpute_node(hostname)
         if type(n_jobs).__name__ == 'int':
             compute_node.change_n_jobs(n_jobs)
         if type(interval).__name__ == 'int':
             self.interval = interval
-        if hasattr(gpus, '__iter__'):
-            if all(type(g).__name__ == 'str' for g in gpus):
-                compute_node.change_gpu_state(gpus)
+        if hasattr(devices, '__iter__'):
+            if all(type(d).__name__ == 'str' for d in devices):
+                compute_node.change_device_state(devices)
 
 
 

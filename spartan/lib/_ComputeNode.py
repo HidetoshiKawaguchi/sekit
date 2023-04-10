@@ -27,17 +27,17 @@ class ComputeNodeThread(Thread):
             while self._continue:
                 try:
                     self.cmd = self.p_cn.q_commands.get(timeout=self.timeout)
-                    gpu = None
-                    if len(self.p_cn.gpu_state) > 0:
-                        # このタイミングでgpu_stateが変わる可能性あり
-                        gpu_key, gpu = self.p_cn.allocate_gpu()
-                        if gpu is not None:
-                            self.cmd += ' --{} {}'.format(gpu_key, gpu)
+                    device = None
+                    if len(self.p_cn.device_state) > 0:
+                        # このタイミングでdevice_stateが変わる可能性あり
+                        device_key, device = self.p_cn.allocate_device()
+                        if device is not None:
+                            self.cmd += ' --{} {}'.format(device_key, device)
                     proc = self.exe_command()
                     proc.wait()
                     self.cmd = None # 実行完了後にNoneにして終わった合図
-                    if gpu is not None:
-                        self.p_cn.release_gpu(gpu)
+                    if device is not None:
+                        self.p_cn.release_device(device)
                     # 同時実行ジョブ数に変更があった場合の処理
                     with self.p_cn.lock:
                         if len(self.p_cn.threads) > self.p_cn.n_jobs:
@@ -61,14 +61,14 @@ class ComputeNode:
     """ localhost内で復数のプロセスを並列実行するためのクラス。
     """
     def __init__(self, n_jobs=1, interval=1,
-                 gpu=None, gpu_key='_gpu',
+                 device=None, device_key='_device',
                  thread_name='localhost'):
         # self.commands = commands
         self.n_jobs = n_jobs
         self.interval = interval
-        gpu = [] if gpu is None else gpu
-        self.gpu_state = OrderedDict([[g, 0] for g in gpu])
-        self.gpu_key = gpu_key
+        device = [] if device is None else device
+        self.device_state = OrderedDict([[d, 0] for d in device])
+        self.device_key = device_key
         self.hostname='localhost'
         self.thread_name = thread_name
         self.lock = Lock()
@@ -125,31 +125,31 @@ class ComputeNode:
             while len(self.threads) < self.n_jobs:
                 self._start_thread(index=len(self.threads))
 
-    def change_gpu_state(self, gpus):
+    def change_device_state(self, devices):
         with self.lock:
-            tmp_gpu_state = OrderedDict([[g, 0] for g in gpus])
-            for g, v in self.gpu_state.items():
-                if g in tmp_gpu_state:
-                    tmp_gpu_state[g] = v
-            self.gpu_state = tmp_gpu_state
+            tmp_device_state = OrderedDict([[d, 0] for d in devices])
+            for g, v in self.device_state.items():
+                if g in tmp_device_state:
+                    tmp_device_state[g] = v
+            self.device_state = tmp_device_state
 
-    def allocate_gpu(self):
-        allocated_gpu = None
+    def allocate_device(self):
+        allocated_device = None
         with self.lock:
-            min_value = min(self.gpu_state.values())
-            for gpu, v in self.gpu_state.items():
+            min_value = min(self.device_state.values())
+            for device, v in self.device_state.items():
                 if v == min_value:
-                    allocated_gpu = gpu
+                    allocated_device = device
                     break
-            self.gpu_state[allocated_gpu] += 1
-        # print('---', self.gpu_state)
-        return self.gpu_key, allocated_gpu
+            self.device_state[allocated_device] += 1
+        # print('---', self.device_state)
+        return self.device_key, allocated_device
 
-    def release_gpu(self, gpu):
+    def release_device(self, device):
         with self.lock:
-            if gpu in self.gpu_state:
-                value = self.gpu_state[gpu] - 1
-                self.gpu_state[gpu] = max(0, value)
+            if device in self.device_state:
+                value = self.device_state[device] - 1
+                self.device_state[device] = max(0, value)
 
     def kill_all(self):
         with self.lock:

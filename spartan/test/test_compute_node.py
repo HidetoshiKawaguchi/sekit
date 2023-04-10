@@ -42,8 +42,8 @@ class TestComputeNode(unittest.TestCase):
             self.assertTrue(os.path.exists(filepath))
             os.remove(filepath)
 
-    def test_gpu(self):
-        cn = ComputeNode(n_jobs=3, gpu=['cuda:0', 'cuda:1'])
+    def test_device(self):
+        cn = ComputeNode(n_jobs=3, device=['cuda:0', 'cuda:1'])
         commands = ['sleep 1; echo '] * 5
         q_commands = Queue()
         for c in commands:
