@@ -18,8 +18,10 @@ class SshComputeNodeThread(ComputeNodeThread):
 class SshComputeNode(ComputeNode):
     def __init__(self, hostname, n_jobs=1,
                  interval=1, thread_name=None,
+                 device=None, device_key='_device',
                  pre_cmd='source .bash_profile',):
         super().__init__(n_jobs=n_jobs, interval=interval,
+                         device=device, device_key=device_key,
                          thread_name=thread_name)
         self.pre_cmd = pre_cmd
         self.hostname = hostname
@@ -41,6 +43,3 @@ class SshComputeNode(ComputeNode):
                                       name=thread_name)
         thread.start()
         self.threads.append(thread)
-
-
-
