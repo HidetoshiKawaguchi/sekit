@@ -54,9 +54,22 @@ class Cluster():
             if cn.hostname == hostname:
                 return cn
 
-    def update_compute_node(self, hostname, n_jobs=None, interval=None):
+    def update_compute_node(self, hostname,
+                            n_jobs=None, interval=None, devices=None):
         compute_node = self.search_conpute_node(hostname)
         if type(n_jobs).__name__ == 'int':
             compute_node.change_n_jobs(n_jobs)
         if type(interval).__name__ == 'int':
             self.interval = interval
+        if hasattr(devices, '__iter__'):
+            if all(type(d).__name__ == 'str' for d in devices):
+                compute_node.change_device_state(devices)
+
+
+
+
+
+
+
+
+

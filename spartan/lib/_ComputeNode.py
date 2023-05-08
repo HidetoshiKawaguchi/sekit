@@ -13,6 +13,7 @@ from threading import current_thread
 from queue import Empty
 from subprocess import Popen
 
+from collections import OrderedDict
 
 class ComputeNodeThread(Thread):
     def __init__(self, p_cn, timeout=1, name='Thread'):
@@ -26,9 +27,17 @@ class ComputeNodeThread(Thread):
             while self._continue:
                 try:
                     self.cmd = self.p_cn.q_commands.get(timeout=self.timeout)
+                    device = None
+                    if len(self.p_cn.device_state) > 0:
+                        # このタイミングでdevice_stateが変わる可能性あり
+                        device_key, device = self.p_cn.allocate_device()
+                        if device is not None:
+                            self.cmd += ' --{} {}'.format(device_key, device)
                     proc = self.exe_command()
                     proc.wait()
                     self.cmd = None # 実行完了後にNoneにして終わった合図
+                    if device is not None:
+                        self.p_cn.release_device(device)
                     # 同時実行ジョブ数に変更があった場合の処理
                     with self.p_cn.lock:
                         if len(self.p_cn.threads) > self.p_cn.n_jobs:
@@ -52,10 +61,14 @@ class ComputeNode:
     """ localhost内で復数のプロセスを並列実行するためのクラス。
     """
     def __init__(self, n_jobs=1, interval=1,
+                 device=None, device_key='_device',
                  thread_name='localhost'):
         # self.commands = commands
         self.n_jobs = n_jobs
         self.interval = interval
+        device = [] if device is None else device
+        self.device_state = OrderedDict([[d, 0] for d in device])
+        self.device_key = device_key
         self.hostname='localhost'
         self.thread_name = thread_name
         self.lock = Lock()
@@ -111,6 +124,32 @@ class ComputeNode:
             self.n_jobs = n_jobs
             while len(self.threads) < self.n_jobs:
                 self._start_thread(index=len(self.threads))
+
+    def change_device_state(self, devices):
+        with self.lock:
+            tmp_device_state = OrderedDict([[d, 0] for d in devices])
+            for g, v in self.device_state.items():
+                if g in tmp_device_state:
+                    tmp_device_state[g] = v
+            self.device_state = tmp_device_state
+
+    def allocate_device(self):
+        allocated_device = None
+        with self.lock:
+            min_value = min(self.device_state.values())
+            for device, v in self.device_state.items():
+                if v == min_value:
+                    allocated_device = device
+                    break
+            self.device_state[allocated_device] += 1
+        # print('---', self.device_state)
+        return self.device_key, allocated_device
+
+    def release_device(self, device):
+        with self.lock:
+            if device in self.device_state:
+                value = self.device_state[device] - 1
+                self.device_state[device] = max(0, value)
 
     def kill_all(self):
         with self.lock:

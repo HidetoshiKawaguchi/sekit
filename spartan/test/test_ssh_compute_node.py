@@ -28,6 +28,10 @@ class TestSshComputeNode(unittest.TestCase):
         cn = SshComputeNode(ssh_hostname, n_jobs=-1)
         self.assertEqual(ssh_n_cpu, cn.n_jobs)
 
+        cn = SshComputeNode(ssh_hostname, n_jobs=8,
+                            device=['cuda:0', 'cuda:1'])
+        self.assertEqual(0, cn.device_state['cuda:0'])
+        self.assertEqual(0, cn.device_state['cuda:1'])
 
         cn = SshComputeNode(ssh_hostname, n_jobs=2)
         filepath_list = [

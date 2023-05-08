@@ -33,13 +33,16 @@ class SpartanController:
             hostname = hst['hostname']
             n_jobs = hst.get('n_jobs', 1)
             interval = hst.get('interval', 1)
+            device = hst.get('device', [])
             if hostname == 'localhost':
                 cn = ComputeNode(n_jobs=n_jobs,
-                                 interval=interval)
+                                 interval=interval,
+                                 device=device)
             else:
                 cn = SshComputeNode(hostname=hostname,
                                     n_jobs=n_jobs,
-                                    interval=interval)
+                                    interval=interval,
+                                    device=device)
             compute_nodes.append(cn)
         self.cluster = Cluster(compute_nodes=compute_nodes)
         self.config_filepath = ''
@@ -55,7 +58,8 @@ class SpartanController:
         initial_config = {'hosts': [
             {'hostname': cn.hostname,
              'n_jobs': cn.n_jobs,
-             'interval': cn.interval}
+             'interval': cn.interval,
+             'device': list(cn.device_state.keys())}
             for cn in self.cluster.compute_nodes
         ]}
         with open(self.config_filepath, 'w') as f:
@@ -75,9 +79,11 @@ class SpartanController:
                     continue
                 n_jobs = hst.get('n_jobs', None)
                 interval = hst.get('interval', None)
+                devices = hst.get('device', None)
                 self.cluster.update_compute_node(hostname,
                                                  n_jobs,
-                                                 interval)
+                                                 interval,
+                                                 devices)
             if display:
                 print("updated {} config.".format(hostname))
         except Exception as e:
