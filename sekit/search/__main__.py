@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import sys, glob
-import os.path as op
+import sys
 
 import pandas as pd
 from argparse import ArgumentParser
 
-from lib import search
+from .search import search
 
 if __name__ == '__main__':
     parser = ArgumentParser(description='')

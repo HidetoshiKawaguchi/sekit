@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from argparse import ArgumentParser
 
-from lib import stats
+from .stats import stats
 
 if __name__ == '__main__':
     parser = ArgumentParser(description='')
