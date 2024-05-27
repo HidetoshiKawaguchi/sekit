@@ -2,13 +2,12 @@
 import os, sys
 import traceback
 import os.path as op
-sys.path.append(op.join(op.dirname(op.abspath(__file__)), '..'))
 import pandas as pd
 import time, json
-from utils import support_numpy
-from utils import convert_param_to_list
-from utils import ParamEncoder
-from utils import make_param_str
+from ..utils import support_numpy
+from ..utils import convert_param_to_list
+from ..utils import ParamEncoder
+from ..utils import make_param_str
 
 def _make_output_dir(mkdir, out_dir, param_list, param_encoder, tail_param):
     if mkdir == 'shallow':

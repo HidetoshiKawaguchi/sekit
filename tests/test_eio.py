@@ -34,15 +34,6 @@ def filenames():
 def made_dir_name():
     return 'made_dir'
 
-@pytest.fixture
-def setup_and_teardown():
-    current_directory = Path(__file__).resolve().parent
-    test_work_dir = current_directory / 'tmp'
-    Path(test_work_dir).mkdir(parents=True, exist_ok=True)
-
-    yield test_work_dir
-
-    shutil.rmtree(test_work_dir)
     
 
 def make_sample(out_dir='./', header=None, param_flag=True, header_flag=True,
@@ -106,8 +97,8 @@ def assert_eio(*args):
 
 
 def test_eio_smoke(param, filenames,
-                   setup_and_teardown):
-    out_dir = setup_and_teardown
+                   tmp_dir):
+    out_dir = tmp_dir
     sample = make_sample(out_dir=out_dir, display=False)
     sample(**param)
     paths = [out_dir / filename for filename in filenames]
@@ -116,8 +107,8 @@ def test_eio_smoke(param, filenames,
 
     
 def test_eio_mkdir_on(param, filenames, made_dir_name,
-                      setup_and_teardown):
-    out_dir = setup_and_teardown
+                      tmp_dir):
+    out_dir = tmp_dir
     mk_dir_path = out_dir /  made_dir_name
 
     # on
@@ -129,8 +120,8 @@ def test_eio_mkdir_on(param, filenames, made_dir_name,
 
 
 def test_eio_mkdir_shallow(param, filenames, made_dir_name,
-                           setup_and_teardown):
-    out_dir = setup_and_teardown
+                           tmp_dir):
+    out_dir = tmp_dir
     mk_dir_path = out_dir / made_dir_name
 
     # shallow
@@ -143,8 +134,8 @@ def test_eio_mkdir_shallow(param, filenames, made_dir_name,
 
 
 def test_eio_mkdir_deep(param, filenames, made_dir_name,
-                        setup_and_teardown):
-    out_dir = setup_and_teardown
+                        tmp_dir):
+    out_dir = tmp_dir
     paths = [out_dir / filename for filename in filenames]
     mk_dir_path = out_dir / made_dir_name
 

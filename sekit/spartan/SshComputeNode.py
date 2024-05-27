@@ -2,8 +2,8 @@
 from subprocess import getoutput
 from subprocess import Popen
 
-from ._ComputeNode import ComputeNode
-from ._ComputeNode import ComputeNodeThread
+from .ComputeNode import ComputeNode
+from .ComputeNode import ComputeNodeThread
 
 class SshComputeNodeThread(ComputeNodeThread):
     def exe_command(self):

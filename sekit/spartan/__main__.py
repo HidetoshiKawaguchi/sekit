@@ -3,7 +3,7 @@
 import sys
 import os.path as op
 
-from .SpartanController import SpartanController
+from .Spartan import SpartanController
 from ..utils import load_yaml_or_json
 
 from argparse import ArgumentParser

@@ -2,8 +2,8 @@
 from time import sleep
 from queue import Queue
 
-from ._ComputeNode import ComputeNode
-from ._SshComputeNode import SshComputeNode
+from .ComputeNode import ComputeNode
+from .SshComputeNode import SshComputeNode
 
 class Cluster():
     def __init__(self,
