@@ -19,7 +19,7 @@ class SshComputeNode(ComputeNode):
     def __init__(self, hostname, n_jobs=1,
                  interval=1, thread_name=None,
                  device=None, device_key='_device',
-                 pre_cmd='source .bash_profile',):
+                 pre_cmd='source .bash_profile',): # TODO: 何かいい書き方はないものか
         super().__init__(n_jobs=n_jobs, interval=interval,
                          device=device, device_key=device_key,
                          thread_name=thread_name)

@@ -1,7 +1,7 @@
 from argparse import ArgumentParser
 
 """
-ComputeNodeのテストの際に呼び出す.
+ComputeNodeやSshComputeNodeのテストの際に呼び出す.
 deviceの設定が割り振られるかをチェックするために使う
 """
 

@@ -3,3 +3,5 @@ __pycache__
 sekit/spartan/.spartan_config.yaml
 sekit/eio/sample/sample*.json
 sekit/eio/sample/sample*.csv
+
+tests/spartan/id_rsa.pub

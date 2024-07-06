@@ -6,8 +6,6 @@ from pathlib import Path
 
 from sekit.spartan import ComputeNode
 
-_interval = 0.001
-
 
 def test_init() -> None:
     """
@@ -21,14 +19,14 @@ def test_init() -> None:
     assert cn.n_jobs == cpu_count()
 
 @pytest.mark.parametrize("n_exe", [1, 5, 10])
-def test_start(tmp_dir, n_exe) -> None:
+def test_start(tmp_dir, n_exe, interval) -> None:
     """
     実行したいコマンドが実行されるかのテスト
     touchコマンドでファイルを作り、その数で過不足なく
     実行されているかを確かめる。
     """
     cn = ComputeNode(n_jobs=cpu_count(),
-                     interval=_interval)
+                     interval=interval)
     out_dir = tmp_dir
     filename_list = [f'___test_{i}' for i in range(n_exe)]
     filepath_list = [out_dir / fn for fn in filename_list]
@@ -46,7 +44,8 @@ def test_start(tmp_dir, n_exe) -> None:
                           ['cuda:0', 'cuda:1'])
                          )
 def test_device(device,
-                tmp_dir):
+                tmp_dir,
+                interval):
     """
     GPU等のdeviceの設定をコマンドに付与できるかのテスト.
     TODO: そもそもの構造として、ComputeNodeにこのテストがいるかは要検討.
@@ -54,7 +53,7 @@ def test_device(device,
     コマンドの修正は行わないほうが良い気がする。
     """
     cn = ComputeNode(n_jobs=3, device=device,
-                     interval=_interval)
+                     interval=interval)
 
     here = Path(__file__).parent
     exe = "python " +  str(here / "write_device_info.py ")
