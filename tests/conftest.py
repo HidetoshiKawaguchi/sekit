@@ -27,10 +27,7 @@ def tmp_dir() -> Generator[Path, None, None]:
     """
     一時的なディレクトリを作成し、テスト後にそのディレクトリを削除する
     """
-    current_directory = Path(__file__).resolve().parent
-    test_work_dir = current_directory / str(uuid.uuid4())
+    test_work_dir = Path() / str(uuid.uuid4())
     Path(test_work_dir).mkdir(parents=True, exist_ok=True)
     yield test_work_dir
     shutil.rmtree(test_work_dir)
-
-
