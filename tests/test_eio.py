@@ -4,6 +4,8 @@ import os
 import shutil
 from pathlib import Path
 import json
+from typing import Callable, Generator
+import numpy as np
 
 import pandas as pd
 from sekit.utils import support_numpy
@@ -11,7 +13,7 @@ from sekit.eio import eio
 
 
 @pytest.fixture
-def param():
+def param() -> dict[str, list[int] | str | float | int]:
     return {
         'hidden_layer_sizes': [100, 200],
         'activation':'relu',
@@ -21,7 +23,7 @@ def param():
 
 
 @pytest.fixture
-def filenames():
+def filenames() -> list[str]:
     return [
         'sample,a=relu,hls=100_200,vf=0.1,_s=2525.json',
         'sample,a=relu,hls=100_200,vf=0.1,_s=2525.csv',
@@ -31,17 +33,29 @@ def filenames():
     ]
 
 @pytest.fixture
-def made_dir_name():
+def made_dir_name() -> str:
     return 'made_dir'
 
     
 
-def make_sample(out_dir='./', header=None, param_flag=True, header_flag=True,
-                process_time=True, trace_back=False,
-                display=True, error_display=False,
-                sort_keys=True, ensure_ascii=False,
-                mkdir='off',
-                indent=4, default=support_numpy, tail_param=('_seed', )):
+def make_sample(out_dir: str = './',
+                header: str | None = None,
+                param_flag: bool = True,
+                header_flag: bool = True,
+                process_time: bool = True,
+                trace_back: bool =False,
+                display: bool = True,
+                error_display: bool = False,
+                sort_keys: bool = True,
+                ensure_ascii: bool = False,
+                mkdir: str = 'off',
+                indent: int = 4,
+                default: Callable[[np.float32 | np.int64 | np.ndarray], float | int | list[int | float]] = support_numpy,
+                tail_param: tuple[str] = ('_seed', )
+                ) -> Callable[
+                    [list[int], str, float, int],
+                    tuple[dict, pd.DataFrame, dict, pd.DataFrame, pd.DataFrame]
+                ]:
     @eio(out_dir=out_dir, header=header, param_flag=param_flag, header_flag=header_flag,
          process_time=process_time, trace_back=trace_back,
          display=display, error_display=error_display,
@@ -51,7 +65,7 @@ def make_sample(out_dir='./', header=None, param_flag=True, header_flag=True,
     def sample(hidden_layer_sizes: tuple,
                activation: str,
                validation_fraction:float,
-               _seed:int) -> dict:
+               _seed:int) -> tuple[dict, pd.DataFrame, dict, pd.DataFrame, pd.DataFrame]:
         dict_out = {
             'a': [a * 2 for a in hidden_layer_sizes],
             'b': '___' + activation + '___',
@@ -69,7 +83,7 @@ def make_sample(out_dir='./', header=None, param_flag=True, header_flag=True,
 
 
 
-def assert_json(result):
+def assert_json(result: dict[str, dict[str, list[int] | str | float]]) -> None:
     assert result['a'][0] == 200
     assert result['a'][1] == 400
     assert result['b'] == '___relu___'
@@ -80,12 +94,12 @@ def assert_json(result):
     assert result['_param']['validation_fraction'] == 0.1
     assert result['_param']['_seed'] == 2525
 
-def assert_df(df):
+def assert_df(df: pd.DataFrame) -> None:
     assert df['a'][0] == 100
     assert df['b'][0] == '___relu___'
     assert df['c'][0] == pytest.approx(0.3)
 
-def assert_eio(*args):
+def assert_eio(*args: list[Path]) -> None:
     for filepath in args:
         ext = os.path.splitext(filepath)[1]
         if ext == 'json':
@@ -96,8 +110,9 @@ def assert_eio(*args):
             assert_df(pd.read_csv(file_path))
 
 
-def test_eio_smoke(param, filenames,
-                   tmp_dir):
+def test_eio_smoke(param: dict[str, list[int] | str | float | int],
+                   filenames: list[str],
+                   tmp_dir: Generator[Path, None, None]) -> None:
     out_dir = tmp_dir
     sample = make_sample(out_dir=out_dir, display=False)
     sample(**param)
@@ -106,8 +121,10 @@ def test_eio_smoke(param, filenames,
 
 
     
-def test_eio_mkdir_on(param, filenames, made_dir_name,
-                      tmp_dir):
+def test_eio_mkdir_on(param: dict[str, list[int] | str | float | int],
+                      filenames: list[str],
+                      made_dir_name: str,
+                      tmp_dir: Generator[Path, None, None]) -> None:
     out_dir = tmp_dir
     mk_dir_path = out_dir /  made_dir_name
 
@@ -119,8 +136,10 @@ def test_eio_mkdir_on(param, filenames, made_dir_name,
     assert_eio(*paths)
 
 
-def test_eio_mkdir_shallow(param, filenames, made_dir_name,
-                           tmp_dir):
+def test_eio_mkdir_shallow(param: dict[str, list[int] | str | float | int],
+                           filenames: list[str],
+                           made_dir_name: str,
+                           tmp_dir: Generator[Path, None, None]) -> None:
     out_dir = tmp_dir
     mk_dir_path = out_dir / made_dir_name
 
@@ -133,8 +152,10 @@ def test_eio_mkdir_shallow(param, filenames, made_dir_name,
     assert_eio(*shallow_paths)
 
 
-def test_eio_mkdir_deep(param, filenames, made_dir_name,
-                        tmp_dir):
+def test_eio_mkdir_deep(param: dict[str, list[int] | str | float | int],
+                        filenames: list[str],
+                        made_dir_name: str,
+                        tmp_dir: Generator[Path, None, None]) -> None:
     out_dir = tmp_dir
     paths = [out_dir / filename for filename in filenames]
     mk_dir_path = out_dir / made_dir_name

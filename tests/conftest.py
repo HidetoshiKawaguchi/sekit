@@ -16,7 +16,7 @@ def search_filepath_list() -> list:
 
 
 @pytest.fixture
-def out_func_hoge_piyo() -> tuple[str, Callable[dict, int]]:
+def out_func_hoge_piyo() -> tuple[str, Callable[dict[str, int], int]]:
     def _func_hoge_piyo(result: dict) -> int:
         return result['hoge'] + result['piyo']
     return ('hoge+piyo', _func_hoge_piyo)

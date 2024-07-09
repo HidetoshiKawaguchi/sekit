@@ -9,7 +9,7 @@ from sekit.search import search
 from sekit.stats import stats
 
 def test_stats(search_filepath_list: list[str],
-               out_func_hoge_piyo: tuple[str, Callable[dict, int]]) -> None:
+               out_func_hoge_piyo: tuple[str, Callable[dict[str, int], int]]) -> None:
     df = search(search_filepath_list, out_funcs=(out_func_hoge_piyo, ))
     stats_df = stats(df)
     
@@ -33,7 +33,7 @@ def test_stats(search_filepath_list: list[str],
     assert stats_df['_n'][0] == 3
 
 
-def test_sampling():
+def test_sampling() -> None:
     filepath = Path(__file__).parent / 'data' / 'test_sample_for_sampling.csv'
     raw_df = pd.read_csv(filepath, index_col=0)
     for _ in range(10):

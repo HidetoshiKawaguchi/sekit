@@ -3,6 +3,7 @@ import pytest
 from multiprocessing import cpu_count
 from queue import Queue
 from pathlib import Path
+from typing import Generator
 
 from sekit.spartan import ComputeNode
 
@@ -19,7 +20,9 @@ def test_init() -> None:
     assert cn.n_jobs == cpu_count()
 
 @pytest.mark.parametrize("n_exe", [1, 5, 10])
-def test_start(tmp_dir, n_exe, interval) -> None:
+def test_start(tmp_dir: Generator[Path, None, None],
+               n_exe: int,
+               interval: float) -> None:
     """
     実行したいコマンドが実行されるかのテスト
     touchコマンドでファイルを作り、その数で過不足なく
@@ -40,12 +43,13 @@ def test_start(tmp_dir, n_exe, interval) -> None:
         assert filepath.is_file()
 
 @pytest.mark.parametrize("device",
-                         (['mps'],
-                          ['cuda:0', 'cuda:1'])
+                         (
+                             ['mps'],
+                             ['cuda:0', 'cuda:1'])
                          )
-def test_device(device,
-                tmp_dir,
-                interval):
+def test_device(device: list[str],
+                tmp_dir: Generator[Path, None, None],
+                interval: float):
     """
     GPU等のdeviceの設定をコマンドに付与できるかのテスト.
     TODO: そもそもの構造として、ComputeNodeにこのテストがいるかは要検討.
