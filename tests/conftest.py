@@ -1,16 +1,16 @@
-import pytest
-import pandas as pd
-from pathlib import Path
 import glob
-from typing import Callable
 import shutil
 import uuid
-from typing import Generator
+from pathlib import Path
+from typing import Callable, Generator
 
-@pytest.fixture(scope='module')
+import pytest
+
+
+@pytest.fixture(scope="module")
 def search_filepath_list() -> list:
     here = Path(__file__).parent
-    pattern = str(here / 'data' / 'results' / '*.json')
+    pattern = str(here / "data" / "results" / "*.json")
     filepath_list = [filepath for filepath in glob.glob(pattern)]
     return filepath_list
 
@@ -18,8 +18,9 @@ def search_filepath_list() -> list:
 @pytest.fixture
 def out_func_hoge_piyo() -> tuple[str, Callable[dict[str, int], int]]:
     def _func_hoge_piyo(result: dict) -> int:
-        return result['hoge'] + result['piyo']
-    return ('hoge+piyo', _func_hoge_piyo)
+        return result["hoge"] + result["piyo"]
+
+    return ("hoge+piyo", _func_hoge_piyo)
 
 
 @pytest.fixture

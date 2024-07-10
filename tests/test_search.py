@@ -1,18 +1,20 @@
 # -*- coding: utf-8 -*-
-import pytest
-import os
 import glob
+import os
+from pathlib import Path
 from typing import Callable
 
-from pathlib import Path
 import pandas as pd
+import pytest
 
 from sekit.search import search
 
 
-def test_search(search_filepath_list: list[str],
-                out_func_hoge_piyo: tuple[str, Callable[dict, int]]) -> None:
-    df = search(search_filepath_list, out_funcs=(out_func_hoge_piyo, ))
+def test_search(
+    search_filepath_list: list[str],
+    out_func_hoge_piyo: tuple[str, Callable[dict, int]],
+) -> None:
+    df = search(search_filepath_list, out_funcs=(out_func_hoge_piyo,))
     assert len(df) == 42
     assert list(df.columns) == [
         "_header",
@@ -26,11 +28,14 @@ def test_search(search_filepath_list: list[str],
         "hoge+piyo",
         "piyo",
         "_process_time",
-        "_filename"
+        "_filename",
     ]
 
     # キャッシュが機能しているかのテスト
     cached_df = df[:10]
-    df2 = search(search_filepath_list, out_funcs=(out_func_hoge_piyo, ),
-                 target_df=cached_df)
+    df2 = search(
+        search_filepath_list,
+        out_funcs=(out_func_hoge_piyo,),
+        target_df=cached_df,
+    )
     assert len(df) == len(df2)
