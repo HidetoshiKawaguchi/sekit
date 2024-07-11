@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
 import os
-import shutil
 from pathlib import Path
 from typing import Callable, Generator
 
@@ -120,12 +119,14 @@ def assert_df(df: pd.DataFrame) -> None:
 def assert_eio(*args: list[Path]) -> None:
     for filepath in args:
         ext = os.path.splitext(filepath)[1]
-        if ext == "json":
-            with open(file_path, "r") as f:
+        if ext == ".json":
+            with open(filepath, "r") as f:
                 so = json.load(f)
                 assert_json(so)
-        elif ext == "csv":
-            assert_df(pd.read_csv(file_path))
+        elif ext == ".csv":
+            assert_df(pd.read_csv(filepath))
+        else:
+            assert False
 
 
 def test_eio_smoke(
@@ -151,7 +152,7 @@ def test_eio_mkdir_on(
 
     # on
     func = make_sample(out_dir=mk_dir_path, display=False, mkdir="on")
-    paths = [out_dir / filename for filename in filenames]
+    paths = [mk_dir_path / filename for filename in filenames]
     func(**param)
     assert_eio(*paths)
 
@@ -184,33 +185,11 @@ def test_eio_mkdir_deep(
     tmp_dir: Generator[Path, None, None],
 ) -> None:
     out_dir = tmp_dir
-    paths = [out_dir / filename for filename in filenames]
     mk_dir_path = out_dir / made_dir_name
 
     # deep
     func_deep = make_sample(out_dir=mk_dir_path, display=False, mkdir="deep")
     func_deep(**param)
-    deep_out_json_path = (
-        mk_dir_path
-        / "a=relu"
-        / "hls=100_200"
-        / "vf=0.1"
-        / "sample,a=relu,hls=100_200,vf=0.1,_s=2525.json"
-    )
-    deep_out_json_path = (
-        mk_dir_path
-        / "a=relu"
-        / "hls=100_200"
-        / "vf=0.1"
-        / "sample,a=relu,hls=100_200,vf=0.1,_s=2525.json"
-    )
-    deep_out_csv_path = (
-        mk_dir_path
-        / "a=relu"
-        / "hls=100_200"
-        / "vf=0.1"
-        / "sample,a=relu,hls=100_200,vf=0.1,_s=2525.csv"
-    )
     deep_paths = [
         mk_dir_path / "a=relu" / "hls=100_200" / "vf=0.1" / filename
         for filename in filenames

@@ -1,11 +1,6 @@
 # -*- coding: utf-8 -*-
-import glob
-import os
-from pathlib import Path
 from typing import Callable
 
-import pandas as pd
-import pytest
 
 from sekit.search import search
 

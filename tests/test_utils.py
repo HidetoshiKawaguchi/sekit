@@ -2,11 +2,15 @@
 from typing import Any
 
 import numpy as np
-import pandas as pd
 import pytest
 
-from sekit.utils import (ParamEncoder, convert_param_to_list, make_param_str,
-                         support_numpy, transform_param_value)
+from sekit.utils import (
+    ParamEncoder,
+    convert_param_to_list,
+    make_param_str,
+    support_numpy,
+    transform_param_value,
+)
 
 
 @pytest.fixture
@@ -99,4 +103,4 @@ def test_support_numpy(
 ) -> None:
     actual = support_numpy(test_input)
     assert actual == expected_value
-    assert type(actual) == expected_type
+    assert isinstance(actual, expected_type)
