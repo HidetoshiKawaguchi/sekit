@@ -3,44 +3,40 @@
 
 ## まず動かしてみる。
 例えば、以下のような実験用関数を例に説明します。
-なお、このファイルはsample/sample1.pyです。
-```python
+なお、このファイルは、このリポジトリのルートディレクトリからみて、`examples/example_eio_1.py`として保存されています。必要に応じてダウンロードしてください。
+```python:examples/example_eio_1.py
 # -*- coding:utf-8 -*-
-import os.path as op
-_base = op.join(op.dirname(op.abspath(__file__)), '..', '..')
-import sys
-sys.path.append(_base)
-import pandas as pd
+from sekit.eio import eio
 
-from eio import eio
 
 @eio()
-def sample1(hidden_layer_sizes: tuple,
-            activation: str,
-            validation_fraction:float) -> dict:
+def example_eio_1(
+    hidden_layer_sizes: list[int], activation: str, validation_fraction: float
+) -> dict[str, list[int] | str | float]:
     dict_out = {
-        'a': [a * 2 for a in hidden_layer_sizes],
-        'b': '___' + activation + '___',
-        'c': validation_fraction * 3
+        "a": [a * 2 for a in hidden_layer_sizes],
+        "b": "___" + activation + "___",
+        "c": validation_fraction * 3,
     }
     return dict_out
 
-if __name__ == '__main__':
-    sample1(hidden_layer_sizes=[100, 200],
-            activation='relu',
-            validation_fraction=0.1)
+
+if __name__ == "__main__":
+    example_eio_1(
+        hidden_layer_sizes=[100, 200],
+        activation="relu",
+        validation_fraction=0.1,
+    )
 ```
-`sample1`メソッドが、`eio`メソッドでデコレートされています。
-`sample`ディレクトリに移動して、実行してみましょう。
-```
-$ cd sample
-$ python sample.py
+`example_eio_1`メソッドが、`eio`メソッドでデコレートされています。
+任意のフォルダで、以上のpythonスクリプトを実行してみましょう。
+```bash
+$ python example_eio_1.py
 [0.0m] finished: a=relu,hls=100,vf=0.1
 ```
-そうすると、以上のようになります。
-実験結果を確認してみましょう。
-```json
-$ cat sample1,a=relu,hls=100,vf=0.1.json
+そうすると、`example_eio_1,a=relu,hls=100_200,vf=0.1.json`というファイル名で、実験結果が保存されます。
+その実験結果を確認してみましょう。
+```json:example_eio_1,a=relu,hls=100_200,vf=0.1.json
 {
     "_param": {
         "activation": "relu",
@@ -61,7 +57,7 @@ $ cat sample1,a=relu,hls=100,vf=0.1.json
 ```
 
 以上がEIOの基本動作です。
-EIOデコレータは、実験用関数(この例では`sample1`関数)の出力を、いい感じに保存してくれる機能を有します。
+EIOデコレータは、実験用関数(この例では`example_eio_1`関数)の出力を、いい感じに保存してくれる機能を有します。
 具体的には、実験用関数に以下の機能を付与します。
 
 - 引数(実験パラメータ)を加味した自動ファイル名生成による保存
@@ -76,58 +72,62 @@ EIOデコレータは、実験用関数(この例では`sample1`関数)の出力
 - Dict型
 - PandasのDataframe型
 
-実験用関数の出力を以上のいずれかもしくは複数の組み合わせに設定することで、Dict型をJSONとして、Dataframe型はCSVとして保存します。
-`sample2.py`のようにすることで、両方で保存することもできます。
-```python
+実験用関数の返り値を以上のいずれかもしくは複数の組み合わせに設定することで、Dict型をJSONとして、Dataframe型はCSVとして保存します。
+例えば以下のように、Dict型とDataFrame型を2つとも返す関数にすることで、両方で保存することができます。以下のコードは`examples/example_eio_2.py`として本リポジトリに保存されています。
+実行すると、以下の2つのファイルが実験結果として保存されます。
+- `example_eio_2,a=relu,hls=100_200,vf=0.1.json`: Dict型の返り値
+- `example_eio_2,a=relu,hls=100_200,vf=0.1.csv`: DataFrame型の返り値
+
+```python:examples/example_eio_2.py
 # -*- coding:utf-8 -*-
-import os.path as op
-_base = op.join(op.dirname(op.abspath(__file__)), '..', '..')
-import sys
-sys.path.append(_base)
 import pandas as pd
 
-from eio import eio
+from sekit.eio import eio
+
 
 @eio()
-def sample2(hidden_layer_sizes: tuple,
-            activation: str,
-            validation_fraction:float) -> dict:
+def example_eio_2(
+    hidden_layer_sizes: list[int], activation: str, validation_fraction: float
+) -> tuple[dict[str, list[int] | str | float] | pd.DataFrame]:
     dict_out = {
-        'a': [a * 2 for a in hidden_layer_sizes],
-        'b': '___' + activation + '___',
-        'c': validation_fraction * 3
+        "a": [a * 2 for a in hidden_layer_sizes],
+        "b": "___" + activation + "___",
+        "c": validation_fraction * 3,
     }
     df_out = pd.DataFrame(
         {
-            'a': [hidden_layer_sizes[0]],
-            'b': ['___' + activation + '___'],
-            'c': [validation_fraction * 3]
+            "a": [hidden_layer_sizes[0]],
+            "b": ["___" + activation + "___"],
+            "c": [validation_fraction * 3],
         }
     )
     return dict_out, df_out
 
-if __name__ == '__main__':
-    sample2(hidden_layer_sizes=[100, 200],
-            activation='relu',
-            validation_fraction=0.1)
+
+if __name__ == "__main__":
+    example_eio_2(
+        hidden_layer_sizes=[100, 200],
+        activation="relu",
+        validation_fraction=0.1,
+    )
 ```
 
 返り値を３つ以上にしても保存します。その場合の命名規則は、以下のように拡張子の手前に数字をいれます。
 - dict３つを返して保存する場合の保存ファイル名
-  - `sample2,a=relu,hls=100_200,vf=0.1.json`
-  - `sample2,a=relu,hls=100_200,vf=0.1_1.json`
-  - `sample2,a=relu,hls=100_200,vf=0.1_2.json`
+  - `example_eio_2,a=relu,hls=100_200,vf=0.1.json`
+  - `example_eio_2,a=relu,hls=100_200,vf=0.1_1.json`
+  - `example_eio_2,a=relu,hls=100_200,vf=0.1_2.json`
 - dict2つとCSV1つを返して保存する場合の保存ファイル名
-  - `sample2,a=relu,hls=100_200,vf=0.1.json`
-  - `sample2,a=relu,hls=100_200,vf=0.1_1.json`
-  - `sample2,a=relu,hls=100_200,vf=0.1.csv`
+  - `example_eio_2,a=relu,hls=100_200,vf=0.1.json`
+  - `example_eio_2,a=relu,hls=100_200,vf=0.1_1.json`
+  - `example_eio_2,a=relu,hls=100_200,vf=0.1.csv`
 
 ## 出力ファイル名に記載されているパラメータ名短縮の規則
 出力されるファイル名は実験関数名と実験パラメータ名とその値で構成されます。
-`sample1.py`の場合は`sample1,a=relu,hls=100_200,vf=0.1.json`ですね。
+`example_eio_1.py`の場合は`example_eio_1,a=relu,hls=100_200,vf=0.1.json`ですね。
 このうち、`,`で区切られている要素を個別に意味を説明します。
 
-- `sample1`: 実験関数名
+- `example_eio_1`: 実験関数名
 - `a=relu`: `activation`引数に`relu`が設定されている
 - `hls=100_200`: `hidden_layer_sizes`に`[100,200]`が設定されている
 - `vf=0.1`: `validation_fraction`に`0.1`が設定されている
@@ -135,7 +135,7 @@ if __name__ == '__main__':
 実験パラメータ名の短縮規則は、以下の通りです。
 - `_`区切りでそれぞれの単語の頭文字が結合される
 - 短縮後の名前に被りがある場合は、２個目以降の末尾に数値が追加される。
-  - 例えば、`activation`と`alpha`というパラメータがあった場合、前者は`a`に、後者や`a1`となる。
+  - 例えば、`activation`と`alpha`というパラメータがあった場合、前者は`a`に、後者は`a1`となる。
 
 
 ## EIOデコレータの引数
