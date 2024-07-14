@@ -1,4 +1,4 @@
-command: python sample/command.py
+command: python ./command.py
 param_grid:
   - {hidden_layer_sizes: [[100, 200], [300]], activation: [relu, tanh], validation_fraction:[0.1]}
   - {hidden_layer_sizes: [[500, 500, 500]], activation: [relu], validation_fraction:[0.4, 0.5]}
