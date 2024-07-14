@@ -5,14 +5,10 @@ Spartanは、実験を並列実行するためのツールです。
 以降では、コンピュータ1台での使い方、クラスタマシンでの使い方の順に説明します。
 
 ## コンピュータ1台での使い方
-1. このREADME.mdがあるディレクトリに移動する
+1. 本リポジトリの`examples`内にある`spartan_input_1.yaml`と`spartan_command.py`を任意の場所に保存する。
 2. 以下のコマンドを実行する。
 ```
-$ ./spartan sample/input.yaml
-```
-もしくは
-```
-$ python spartan sample/input.yaml
+python -m sekit.spartan spartan_input_1.yaml
 ```
 
 以上の手順を実行すると、以下のような表示時がされるかと思います。
@@ -37,12 +33,13 @@ goro-127999999.67022167 (a=0.8, b=goro, _seed=2397773)
 
 完全に同じものにはならないと思います。似たようなモノが表示されればOKです。
 
-何が実行されたかというと、`sample/command.py`が様々なパラメータで並列実行されました。
-`sample/command.py`の中身は以下のとおりです。
+何が実行されたかというと、`spartan_command.py`が様々なパラメータで並列実行されました。
+`spartan_command.py`の中身は以下のとおりです。
 ```python
 # -*- coding: utf-8 -*-
 import sys, json, random
 from argparse import ArgumentParser
+
 
 def exe(a: float, b: str, _seed: int) -> str:
     random.seed(_seed)
@@ -50,21 +47,22 @@ def exe(a: float, b: str, _seed: int) -> str:
     c = random.randint(1, 3)
     for _ in range(int(a * (c * 10**8))):
         s += a
-    out = '{}-{} (a={}, b={}, _seed={})'.format(b, s, a, b, _seed)
+    out = "{}-{} (a={}, b={}, _seed={})".format(b, s, a, b, _seed)
     return out
 
-if __name__ == '__main__':
-    parser = ArgumentParser(description='')
-    parser.add_argument('json', nargs='*')
-    parser.add_argument('--a', type=float, default=0.1)
-    parser.add_argument('--b', type=str, default='hoge')
-    parser.add_argument('--_seed', type=int, default=3939)
+
+if __name__ == "__main__":
+    parser = ArgumentParser(description="")
+    parser.add_argument("json", nargs="*")
+    parser.add_argument("--a", type=float, default=0.1)
+    parser.add_argument("--b", type=str, default="hoge")
+    parser.add_argument("--_seed", type=int, default=3939)
     args = parser.parse_args()
     if len(args.json) > 0:
         param = json.loads(args.json[0])
     else:
         param = args.__dict__
-        del param['json']
+        del param["json"]
     print(exe(**param))
 ```
 
@@ -100,11 +98,11 @@ Spartanは、このように自動で生成されたを引数に受け渡す形�
 
 となります。これらが２回ずつ実行、合計16回実行されました。上述した実行結果も16行あるはずです。
 
-このように実行するのを設定しているのは`sample/input.yaml`です。
+このように実行するのを設定しているのは`spartan_input_1.yaml`です。
 内容は以下の通りです。
 
 ```yaml
-command: python sample/command.py
+command: python spartan_command.py
 param_grid:
   - {a: [0.1, 0.5, 0.8], b: [hoge, goro]}
   - {a: [0.3, 0.4], b: [piyo]}
@@ -142,40 +140,40 @@ Spartanの実行時に引数に設定したファイルです。
 - Spartanを実行するホストから計算ノードにパスワードなしでSSH接続ができる
 - すべての計算ノードでコマンドを実行できる
 
-1つ目の前提は、例えば計算ノードのホスト名を`cassia`だとすると、以下のコマンドだけで接続できることです。
+1つ目の前提は、例えば計算ノードのホスト名を`test_ssh_server`だとすると、以下のコマンドだけで接続できることです。
 ```
-$ ssh cassia
+$ ssh test_ssh_server
 ```
 また、接続確認方法として
 ```
-$ ssh cassia ls
+$ ssh test_ssh_server ls
 ```
 としてパスワードを聞かれることなく接続先でlsコマンドの結果(おそらくホームディレクトリのファイルやディレクトリ一覧)が表示されればOKです。
 
 2つ目の前提は、ホストと計算ノードですべてライブラリ等の実験環境を同一にしておくということです。
 例えば、ホストで
 ```
-$ python command.py
+$ python spartan_command.py
 ```
 と実行できるとします。他の計算ノードでも同じコマンドを実行できるようにしておきます。
 つまり、ホストから以下のように実行できるようにする必要があります。
 ```
-$ ssh cassia "python command.py"
+$ ssh test_ssh_server "python spartan_command.py"
 ```
 
 続いて設定ファイルの書き方を説明します。
-ホストから`cassia-1`と`cassia-2`という２つの計算ノードにSSH接続できるものとします。
+ホストから`test_ssh_server_1`と`test_ssh_server_2`という２つの計算ノードにSSH接続できるものとします。
 そして、ローカルホスト、とこれら2つの計算ノードで分散しながら並列実行する例を示します。
 設定ファイルは以下のようになります。
 ```yaml
-command: python sample/command.py
+command: python spartan_command.py
 param_grid:
   - {a: [0.1, 0.5, 0.8], b: [hoge, goro]}
   - {a: [0.3, 0.4], b: [piyo]}
 hosts:
   - {hostname: localhost, n_jobs: 2}
-  - {hostname: cassia-1, n_jobs: 4}
-  - {hostname: cassia-2, n_jobs: 8}
+  - {hostname: test_ssh_server_1, n_jobs: 4}
+  - {hostname: test_ssh_server_2, n_jobs: 8}
 option:
   n_seeds: 2
 #  maxsize: 7
@@ -183,8 +181,8 @@ option:
 #  config_filepath: .spartan_config.yaml
 #  display: true
 ```
-このファイルは`sample/cluster_input.yaml`としてリポジトリ内に保存されています。
-このファイルは、ローカルで2並列、`cassia-1`で4並列、`cassia-2`で8並列で実行されます。
+このファイルは`examples/spartan_input_2.yaml`としてリポジトリ内に保存されています。
+このファイルは、ローカルで2並列、`test_ssh_server_1`で4並列、`test_ssh_server_2`で8並列で実行されます。
 また、`hostname`への設定で`localhost`だけは特別で、SSHを使わずにローカルで並列実行数ということになります。
 
 実行結果は、コンピュータ1台での使い方、の例と同じようなものが表示されるはずです。
@@ -194,7 +192,7 @@ option:
 実験にGPUを使いたい場合があります。コンピュータ1台にGPUが2台以上ある場合、それらの割り振りも管理しながら実行する場合の機能も搭載しています。
 例えば、以下のようにhosts内のホスト毎に`device`をキーとして、GPUの識別名のリストを値として設定します。
 ```yaml
-command: python sample/command_cuda.py
+command: python spartan_gpu_command.py
 param_grid:
   - {a: [0.1, 0.5, 0.8], b: [hoge, goro]}
   - {a: [0.3, 0.4], b: [piyo]}
@@ -239,7 +237,7 @@ Spartanを実行すると、最初に`.spartan_config.yaml`というファイル
 その中には`hosts`の情報が記載されています。
 Spartan実行中にこのファイルの中身を書き換えることで、Spartanで計算ノード毎の並列実行数を制御できます。
 
-例えば、上記の設定ファイルを実行すると、`.spartan_config.yaml`は以下のnような内容で保存されます。
+例えば、上記の設定ファイルを実行すると、`.spartan_config.yaml`は以下のような内容で保存されます。
 
 ```yaml
 hosts:
@@ -297,9 +295,3 @@ hosts:
 - `maxsize`: 内部でパラメータの組み合わせを保持する個数。あまりにもパラメータの組み合わせ数が多いときに100,1000などの数を設定してください。デフォルトだと、すべてのパラメータの組み合わせをメモリ上に保持します。
 - `interval`: Spartan実行時、各種処理の間隔。単位は秒。デフォルトは1秒
 - `display`: Spartanの実行中の状態を表示するかどうかを設定する。デフォルトは`true`で、表示される。
-
-
-## 【開発者向け】注意
-### テストについて
-テストファイルは実行環境に依存します。作者の環境にあわせて作成されており、実行してもテストは通らないと思います。
-サンプルは動くと思います。

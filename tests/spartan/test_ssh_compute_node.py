@@ -9,37 +9,7 @@ import pytest
 from sekit.spartan import SshComputeNode
 
 """
-テスト環境セットアップ方法
-※ 以下の手順のコマンドはすべて本リポジトリのルートディレクトリで実行されるものとする。
 
-1. 例えば以下のコマンドで、SSH接続用の秘密鍵と公開鍵を作る
-ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
-この時、~/.ssh/にid_rsaとid_rsa.pubができる。
-
-2. 以下のコマンドを実行して、このファイルがあるディレクトリにid_rsa.pubを保存する。
-cp ~/.ssh/id_rsa.pub ./tests/spartan/
-
-3. 以下のコマンドを実行して、Dockerイメージをビルドする
-docker build -t test_ssh_server ./tests/spartan/
-
-4. 以下のコマンドを実行して、テスト用Dockerコンテナを起動する。
-docker run -d -p 2222:22 --name test_ssh_container test_ssh_server
-
-5. /etc/hostsを設定してtest-ssh-serverというホスト名で127.0.0.1につながるようにする。
-```
-127.0.0.1       test-ssh-server
-```
-
-6. ~/.ssh/configに以下の設定を追加する。
-```
-Host test-ssh-server
-  HostName test-ssh-server
-  User root
-  Port 2222
-```
-
-確認方法
-ssh test-ssh-server
 """
 
 
