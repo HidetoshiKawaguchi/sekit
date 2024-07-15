@@ -1,3 +1,4 @@
-from .scatter import scatter
 from .search import search
 from .stats import stats
+
+__all__ = [search, stats]
