@@ -2,14 +2,17 @@
 import json
 import os
 import os.path as op
-import sys
 import time
 import traceback
 
 import pandas as pd
 
-from ..utils import (ParamEncoder, convert_param_to_list, make_param_str,
-                     support_numpy)
+from ..utils import (
+    ParamEncoder,
+    convert_param_to_list,
+    make_param_str,
+    support_numpy,
+)
 
 
 def _make_output_dir(mkdir, out_dir, param_list, param_encoder, tail_param):

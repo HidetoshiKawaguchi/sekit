@@ -3,7 +3,6 @@ from queue import Queue
 from time import sleep
 
 from .ComputeNode import ComputeNode
-from .SshComputeNode import SshComputeNode
 
 
 class Cluster:

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import random
 from itertools import product
 
 

@@ -3,7 +3,7 @@ import time
 from collections import OrderedDict
 from multiprocessing import cpu_count
 from queue import Empty, Queue
-from subprocess import PIPE, Popen
+from subprocess import Popen
 from threading import Lock, Thread, current_thread
 
 
@@ -36,7 +36,7 @@ class ComputeNodeThread(Thread):
                         if len(self.p_cn.threads) > self.p_cn.n_jobs:
                             self.p_cn.threads.remove(current_thread())
                             self.reserve_killed()
-                except Empty as e:
+                except Empty:
                     continue
         finally:
             # print(self.name + ' was killed.')

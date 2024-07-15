@@ -5,7 +5,6 @@ class ParamEncoder:
     def __init__(self, sep="_"):
         self.mapping_ = {}
         self.sep = sep
-        pass
 
     def encode(self, param, sep=None):
         """与えられたパラメータをある規則に従って短縮形で返すメソッド. 内部状態にも依存する。

@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import os
-import os.path as op
 import random
-import sys
 from itertools import product
 from queue import Queue
 from time import sleep
@@ -93,7 +91,7 @@ class SpartanController:
                 )
             if display:
                 print("updated {} config.".format(hostname))
-        except Exception as e:
+        except Exception:
             if display:
                 print("coludn't update config.")
 

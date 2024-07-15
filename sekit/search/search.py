@@ -40,7 +40,7 @@ def search(
                 result = json.load(f)
                 if "_error_type" in result or not param_key in result:
                     continue
-            except Exception as e:
+            except Exception:
                 continue
         params = params | set(k for k in result.get(param_key, {}).keys())
         row_dict = {

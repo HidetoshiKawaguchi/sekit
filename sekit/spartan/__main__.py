@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import os.path as op
-import sys
 from argparse import ArgumentParser
 
 from ..utils import load_yaml_or_json
