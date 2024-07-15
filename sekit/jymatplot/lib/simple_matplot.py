@@ -52,7 +52,7 @@ def simple_matplot(
     for p in param.get(_plots_key, []):
         method = p.get("method", "plot")
         del p["method"]
-        if not "marker" in p:
+        if "marker" not in p:
             p["marker"] = markers.next()
         if method == "plot":
             x, y = p["x"], p["y"]
@@ -65,9 +65,9 @@ def simple_matplot(
         if k in _special_keys:
             continue
         call = getattr(ax, k)
-        if type(p) == dict:
+        if isinstance(p, dict):
             call(**p)
-        elif type(p) == list:
+        elif isinstance(p, list):
             call(*p)
         else:
             call(p)

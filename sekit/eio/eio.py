@@ -86,10 +86,10 @@ def eio(
             process_time = time.time() - start_time
 
             # 出力ディレクトリとファイル名の文字列の作成
-            ## out_dir: 出力先のディレクトリ
-            ## kargs: 実験用関数のパラメータ(dict)
-            ## tail_param: 文字列生成時に末尾に持ってくるパラメータ
-            ## mkdir: ディレクトリの作成モード
+            # - out_dir: 出力先のディレクトリ
+            # - kargs: 実験用関数のパラメータ(dict)
+            # - tail_param: 文字列生成時に末尾に持ってくるパラメータ
+            # - mkdir: ディレクトリの作成モード
             output_dir, filename_param_str = _make_output_info(
                 out_dir, kargs, tail_param, mkdir
             )
@@ -97,7 +97,7 @@ def eio(
                 os.makedirs(output_dir, exist_ok=True)
 
             # 出力ディレクトリとファイル名の文字列を使って、実際に書き込む
-            ## JSON用の書き込みメソッド
+            # JSON用の書き込みメソッド
             def write_json(result, cnt=0):
                 if header_flag:
                     result["_header"] = l_header
@@ -125,7 +125,7 @@ def eio(
                 with open(outpath, "w", encoding="utf-8") as f:
                     f.write(result_json_str)
 
-            ## CSV用の書き込みメソッド
+            # CSV用の書き込みメソッド
             def write_csv(df, cnt=0):
                 tail = "" if cnt == 0 else ("_" + str(cnt))
                 filename = "{},{}{}.csv".format(

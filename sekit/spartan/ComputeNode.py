@@ -80,7 +80,7 @@ class ComputeNode:
         self.__n_jobs = cpu_count() if n_jobs < 0 else n_jobs
 
     def _start_setup(self, commands):
-        if type(commands) == Queue:
+        if isinstance(commands, Queue):
             # Queueならそれを入れる
             self.q_commands = commands
         elif hasattr(commands, "__iter__"):

@@ -1,16 +1,13 @@
 # -*- coding:utf-8 -*-
-import os.path as op
+import json
+import random
+import sys
+from pathlib import Path
 
-_base = op.join(op.dirname(op.abspath(__file__)), "..", "..")
-import sys, random, json
-
-sys.path.append(_base)
-import pandas as pd
-
-from eio import eio
+from sekit.eio import eio
 
 
-@eio(out_dir=op.join(_base, "search", "sample", "result"))
+@eio(out_dir=Path(__file__).parent)
 def sample(
     hidden_layer_sizes: tuple,
     activation: str,

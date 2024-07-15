@@ -37,7 +37,8 @@ goro-127999999.67022167 (a=0.8, b=goro, _seed=2397773)
 `spartan_command.py`の中身は以下のとおりです。
 ```python
 # -*- coding: utf-8 -*-
-import sys, json, random
+import json
+import random
 from argparse import ArgumentParser
 
 

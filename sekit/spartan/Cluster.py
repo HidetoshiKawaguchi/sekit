@@ -18,7 +18,7 @@ class Cluster:
         self.commands_queue = None
 
     def _start_setup(self, commands):
-        if type(commands) == Queue:
+        if isinstance(commands, Queue):
             # Queueならそれを入れる
             self.commands_queue = commands
         elif hasattr(commands, "__iter__"):

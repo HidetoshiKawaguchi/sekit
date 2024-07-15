@@ -38,7 +38,7 @@ def search(
         with open(filepath, "r") as f:
             try:
                 result = json.load(f)
-                if "_error_type" in result or not param_key in result:
+                if "_error_type" in result or param_key not in result:
                     continue
             except Exception:
                 continue

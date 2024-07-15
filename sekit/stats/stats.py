@@ -14,7 +14,7 @@ def _get_param_out(in_df, sep, ignore):
         if c == sep:
             param_flag = False
             continue
-        if not c in ignore:
+        if c not in ignore:
             if param_flag:
                 param.append(c)
             elif param_flag is False and (
@@ -75,11 +75,11 @@ def stats(
     bool_params = {
         k for k, v in in_df.dtypes.items() if k in param and v == bool
     }
-    ## dtypesは最後に出力のdfの型を保持するために必要．ただし，bool型以外
-    ## bool_paramsは，bool型のパラメータ．最後まとめていると，bool型が全てTrueに変換されてしまうため，特別な処理が必要
+    # dtypesは最後に出力のdfの型を保持するために必要．ただし，bool型以外
+    # bool_paramsは，bool型のパラメータ．最後まとめていると，bool型が全てTrueに変換されてしまうため，特別な処理が必要
 
     # n_samplesを基にサンプリング
-    if not n_samples is None and n_samples > 0:
+    if n_samples is not None and n_samples > 0:
         in_df = _sample(in_df, param, n_samples, connector=connector)
 
     # dictに集計

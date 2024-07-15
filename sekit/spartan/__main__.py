@@ -38,7 +38,7 @@ if __name__ == "__main__":
     for k, v in args.__dict__.items():
         if v is None:
             continue
-        v = "'" + v + "'" if type(v) == str else v
+        v = "'" + v + "'" if isinstance(v, str) else v
         exec("{} = {}".format(k, v))
     sc = SpartanController(hosts, mode=mode)
     sc.exe(
