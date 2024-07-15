@@ -1,16 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import os, sys, io, time
+import io
+import os
 import os.path as op
+import sys
+import time
+
 sys.path.append(op.join(op.dirname(op.abspath(__file__)), '..'))
 
-import yaml
 from argparse import ArgumentParser
 from datetime import datetime
 
-from utils import load_yaml_or_json
+import yaml
 from lib import simple_matplot
-
+from utils import load_yaml_or_json
 
 if __name__ == '__main__':
     parser = ArgumentParser()

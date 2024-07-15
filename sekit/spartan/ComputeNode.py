@@ -1,27 +1,20 @@
 # -*- coding: utf-8 -*-
 import time
-
-from threading import Lock
-
-from queue import Queue
-from subprocess import PIPE
-from multiprocessing import cpu_count
-
-from threading import Thread
-from threading import current_thread
-
-from queue import Empty
-from subprocess import Popen
-
 from collections import OrderedDict
+from multiprocessing import cpu_count
+from queue import Empty, Queue
+from subprocess import PIPE, Popen
+from threading import Lock, Thread, current_thread
+
 
 class ComputeNodeThread(Thread):
-    def __init__(self, p_cn, timeout=1, name='Thread'):
+    def __init__(self, p_cn, timeout=1, name="Thread"):
         super().__init__(name=name)
         self.p_cn = p_cn
         self.timeout = timeout
         self._continue = True
         self.cmd = None
+
     def run(self):
         try:
             while self._continue:
@@ -32,10 +25,10 @@ class ComputeNodeThread(Thread):
                         # このタイミングでdevice_stateが変わる可能性あり
                         device_key, device = self.p_cn.allocate_device()
                         if device is not None:
-                            self.cmd += ' --{} {}'.format(device_key, device)
+                            self.cmd += " --{} {}".format(device_key, device)
                     proc = self.exe_command()
                     proc.wait()
-                    self.cmd = None # 実行完了後にNoneにして終わった合図
+                    self.cmd = None  # 実行完了後にNoneにして終わった合図
                     if device is not None:
                         self.p_cn.release_device(device)
                     # 同時実行ジョブ数に変更があった場合の処理
@@ -56,20 +49,24 @@ class ComputeNodeThread(Thread):
         return Popen(self.cmd, shell=True)
 
 
-
 class ComputeNode:
-    """ localhost内で復数のプロセスを並列実行するためのクラス。
-    """
-    def __init__(self, n_jobs=1, interval=1,
-                 device=None, device_key='_device',
-                 thread_name='localhost'):
+    """localhost内で復数のプロセスを並列実行するためのクラス。"""
+
+    def __init__(
+        self,
+        n_jobs=1,
+        interval=1,
+        device=None,
+        device_key="_device",
+        thread_name="localhost",
+    ):
         # self.commands = commands
         self.n_jobs = n_jobs
         self.interval = interval
         device = [] if device is None else device
         self.device_state = OrderedDict([[d, 0] for d in device])
         self.device_key = device_key
-        self.hostname='localhost'
+        self.hostname = "localhost"
         self.thread_name = thread_name
         self.lock = Lock()
         self.threads = []
@@ -86,18 +83,17 @@ class ComputeNode:
         if type(commands) == Queue:
             # Queueならそれを入れる
             self.q_commands = commands
-        elif hasattr(commands, '__iter__'):
+        elif hasattr(commands, "__iter__"):
             # QueueではくてイテレーションするならQueueを**新しく**作る
             self.q_commands = Queue()
             for c in commands:
                 self.q_commands.put(c)
         else:
-            raise TypeError('Queue型もしくはイテレーション型を入れてください')
+            raise TypeError("Queue型もしくはイテレーション型を入れてください")
 
     def _start_thread(self, index):
-        thread_name = '{}_{}'.format(self.thread_name, index)
-        thread = ComputeNodeThread(p_cn=self,
-                                  name=thread_name)
+        thread_name = "{}_{}".format(self.thread_name, index)
+        thread = ComputeNodeThread(p_cn=self, name=thread_name)
         thread.start()
         self.threads.append(thread)
 
@@ -119,7 +115,7 @@ class ComputeNode:
             # queueを待機している=実行は終了しているから
         self.kill_all()
 
-    def change_n_jobs(self, n_jobs): # 途中でjobの数を変える時の処理
+    def change_n_jobs(self, n_jobs):  # 途中でjobの数を変える時の処理
         with self.lock:
             self.n_jobs = n_jobs
             while len(self.threads) < self.n_jobs:

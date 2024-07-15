@@ -1,30 +1,34 @@
 # -*- coding: utf-8 -*-
-from time import sleep
 from queue import Queue
+from time import sleep
 
 from .ComputeNode import ComputeNode
 from .SshComputeNode import SshComputeNode
 
-class Cluster():
-    def __init__(self,
-                 compute_nodes=[ComputeNode(), ],
-                 interval=1):
+
+class Cluster:
+    def __init__(
+        self,
+        compute_nodes=[
+            ComputeNode(),
+        ],
+        interval=1,
+    ):
         self.compute_nodes = compute_nodes
         self.interval = interval
         self.commands_queue = None
-
 
     def _start_setup(self, commands):
         if type(commands) == Queue:
             # Queueならそれを入れる
             self.commands_queue = commands
-        elif hasattr(commands, '__iter__'):
+        elif hasattr(commands, "__iter__"):
             # QueueではくてイテレーションするならQueueを**新しく**作る
             self.commands_queue = Queue()
             for c in commands:
                 self.commands_queue.put(c)
         else:
-            raise TypeError('Queue型もしくはイテレーション型を入れてください')
+            raise TypeError("Queue型もしくはイテレーション型を入れてください")
 
     def start(self, commands):
         self._start_setup(commands)
@@ -54,22 +58,14 @@ class Cluster():
             if cn.hostname == hostname:
                 return cn
 
-    def update_compute_node(self, hostname,
-                            n_jobs=None, interval=None, devices=None):
+    def update_compute_node(
+        self, hostname, n_jobs=None, interval=None, devices=None
+    ):
         compute_node = self.search_conpute_node(hostname)
-        if type(n_jobs).__name__ == 'int':
+        if type(n_jobs).__name__ == "int":
             compute_node.change_n_jobs(n_jobs)
-        if type(interval).__name__ == 'int':
+        if type(interval).__name__ == "int":
             self.interval = interval
-        if hasattr(devices, '__iter__'):
-            if all(type(d).__name__ == 'str' for d in devices):
+        if hasattr(devices, "__iter__"):
+            if all(type(d).__name__ == "str" for d in devices):
                 compute_node.change_device_state(devices)
-
-
-
-
-
-
-
-
-

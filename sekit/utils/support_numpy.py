@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 import numpy as np
 
+
 # json.dumpsでdictをjson文字列へ変換するときに、numpyの型へ対応するためのメソッド
 ## (例)json.dumps(result, sort_keys = True, indent = 4, default=support_numpy )
 def support_numpy(o):

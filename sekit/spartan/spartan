@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import sys
 import os.path as op
-
-from .SpartanController import SpartanController
-from ..utils import load_yaml_or_json
-
+import sys
 from argparse import ArgumentParser
+
+from ..utils import load_yaml_or_json
+from .SpartanController import SpartanController
 
 if __name__ == '__main__':
     parser = ArgumentParser(description='')
