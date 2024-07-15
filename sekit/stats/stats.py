@@ -89,7 +89,6 @@ def stats(
     stat_outkey = [
         "{}{}".format(o, sf[0]) for o, sf in product(outkey, stat_funcs)
     ]
-    result_df = pd.DataFrame(columns=param + [count_key, sep] + stat_outkey)
     row_list = []
     for key, sampling_values in stats_dict.items():
         param_values = key.split(connector)
@@ -99,10 +98,7 @@ def stats(
                 row[out_k + s] = f(sv)
             row[count_key] = len(sv)
         row_list.append(row)
-    result_df = pd.concat(
-        [result_df, pd.DataFrame(row_list)], ignore_index=True
-    )
-
+    result_df = pd.DataFrame(row_list)
     result_df[sep] = sep
     result_df = result_df.astype(dtypes)
     for bool_param in bool_params:
