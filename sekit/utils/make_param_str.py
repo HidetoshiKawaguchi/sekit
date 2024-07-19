@@ -1,9 +1,16 @@
 # -*- coding: utf-8 -*-
+from typing import Any, Sequence
+
 from .ParamEncoder import ParamEncoder
 from .transform_param_value import transform_param_value
 
 
-def make_param_str(params, param_encoder=None, connector="=", sep=","):
+def make_param_str(
+    params: dict | Sequence[Sequence[str | Any]],
+    param_encoder: ParamEncoder | None = None,
+    connector: str = "=",
+    sep: str = ",",
+) -> str:
     """パラメータ名と値がセットになっているdictかそれをリストに変換したものを入力として、１つの文字列を生成する関数
     Parameters
     ----------

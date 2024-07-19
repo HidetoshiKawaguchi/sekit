@@ -1,5 +1,12 @@
+from typing import Any
+
+
 def transform_param_value(
-    obj, sep="_", none_str="null", kv="-", dict_reverse=False
+    obj: Any,
+    sep: str = "_",
+    none_str: str = "null",
+    kv: str = "-",
+    dict_reverse: bool = False,
 ):
     """実験の値を文字列に変換する関数. 主にファイル名の生成のために使う
 

@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
+from typing import Sequence
 from subprocess import Popen, getoutput
 
 from .ComputeNode import ComputeNode, ComputeNodeThread
 
 
 class SshComputeNodeThread(ComputeNodeThread):
-    def exe_command(self):
+    def exe_command(self) -> Popen:
         ssh_header = "ssh " + self.p_cn.hostname + " "
         out_cmd = ""
         for c in self.cmd.strip(" ;").split(";"):
@@ -17,14 +18,14 @@ class SshComputeNodeThread(ComputeNodeThread):
 class SshComputeNode(ComputeNode):
     def __init__(
         self,
-        hostname,
-        n_jobs=1,
-        interval=1,
-        thread_name=None,
-        device=None,
-        device_key="_device",
-        pre_cmd="source .bash_profile",
-    ):  # TODO: 何かいい書き方はないものか
+        hostname: str,
+        n_jobs: int = 1,
+        interval: int | float = 1,
+        thread_name: str | None = None,
+        device: Sequence[str] | None = None,
+        device_key: str = "_device",
+        pre_cmd: str = "source .bash_profile",  # TODO: 何かいい書き方はないものか
+    ) -> None:
         super().__init__(
             n_jobs=n_jobs,
             interval=interval,
@@ -49,7 +50,7 @@ class SshComputeNode(ComputeNode):
         else:
             self.n_jobs = n_jobs
 
-    def _start_thread(self, index):
+    def _start_thread(self, index: str) -> None:
         thread_name = "{}_{}".format(self.thread_name, index)
         thread = SshComputeNodeThread(p_cn=self, name=thread_name)
         thread.start()

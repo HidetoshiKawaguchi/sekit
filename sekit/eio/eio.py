@@ -4,6 +4,7 @@ import os
 import os.path as op
 import time
 import traceback
+from typing import Any, Callable, Literal, Sequence, TypeAlias
 
 import pandas as pd
 
@@ -14,8 +15,25 @@ from ..utils import (
     support_numpy,
 )
 
+EioOutput: TypeAlias = (
+    dict[str, Any] | pd.DataFrame | tuple[dict | pd.DataFrame]
+)
 
-def _make_output_dir(mkdir, out_dir, param_list, param_encoder, tail_param):
+
+def _make_output_dir(
+    mkdir: Literal["shallow", "deep", "on", "off"],
+    out_dir: str,
+    param_list: list[list[str, Any]],
+    param_encoder: ParamEncoder,
+    tail_param: Sequence[str],
+) -> str:
+    if mkdir not in {"shallow", "deep", "on", "off"}:
+        err_msg = (
+            f"Invalid value for 'mkdir': {mkdir}."
+            + " Allowed values are 'shallow', 'deep', 'on', 'off'."
+        )
+        raise ValueError(err_msg)
+
     if mkdir == "shallow":
         dirname_param_str = make_param_str(
             param_list[: -len(tail_param)],
@@ -30,12 +48,17 @@ def _make_output_dir(mkdir, out_dir, param_list, param_encoder, tail_param):
             sep="/",
         )
         output_dir = op.join(out_dir, dirname_param_str)
-    else:  # mkdir == 'on' or mkdir == 'off'
+    elif mkdir == "on" or mkdir == "off":
         output_dir = out_dir
     return output_dir
 
 
-def _make_output_info(out_dir, kargs, tail_param, mkdir):
+def _make_output_info(
+    out_dir: str,
+    kargs: dict[Any, Any],
+    tail_param: Sequence[str],
+    mkdir: Literal["shallow", "deep", "on", "off"],
+) -> tuple[str, str]:
     # パラメータの順番を整えるためにリスト化。[key, value]を要素として持つ
     param_list = convert_param_to_list(kargs, tail_param=tail_param)
     param_encoder = (
@@ -52,23 +75,25 @@ def _make_output_info(out_dir, kargs, tail_param, mkdir):
 
 
 def eio(
-    out_dir="./",
-    header=None,
-    param_flag=True,
-    header_flag=True,
-    process_time=True,
-    trace_back=False,
-    display=True,
-    error_display=False,
-    sort_keys=True,
-    ensure_ascii=False,
-    mkdir="off",
-    indent=4,
-    default=support_numpy,
-    tail_param=("_seed",),
-):
-    def _eio(func):
-        def _decorated_func(*args, **kargs):
+    out_dir: str = "./",
+    header: str | None = None,
+    param_flag: bool = True,
+    header_flag: bool = True,
+    process_time: float = True,
+    trace_back: bool = False,
+    display: bool = True,
+    error_display: bool = False,
+    sort_keys: bool = True,
+    ensure_ascii: bool = False,
+    mkdir: Literal["shallow", "deep", "on", "off"] = "off",
+    indent: int = 4,
+    default: Callable[[Any], float | int | list] = support_numpy,
+    tail_param: Sequence[str] = ("_seed",),
+) -> Callable[[Callable[..., EioOutput]], Callable[..., EioOutput]]:
+    def _eio(func: Callable[..., EioOutput]) -> Callable[..., EioOutput]:
+        def _decorated_func(
+            *args: tuple[...], **kargs: dict[str, Any]
+        ) -> EioOutput:
             l_header = func.__name__ if header is None else header
             start_time = time.time()
             if trace_back:

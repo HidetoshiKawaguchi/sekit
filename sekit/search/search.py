@@ -3,23 +3,26 @@ import json
 import os.path as op
 from glob import glob
 from itertools import chain
+from typing import Any, Callable, Sequence, Literal
 
 import pandas as pd
 
 
 def search(
-    filepath_list,
-    dir=None,
-    out_funcs=tuple(),
-    types=(str, int, float),
-    param_key="_param",
-    filename_key="_filename",
-    sep="|",
-    head_columns=("_header",),
-    tail_columns=("_process_time", "_filename"),
-    target_df=None,
-    display=False,
-):
+    filepath_list: Sequence[str],
+    dir: str | None = None,
+    out_funcs: Sequence[
+        Callable[[dict[str, Any]], int | float | str]
+    ] = tuple(),
+    types: Sequence[Literal[str, int, float]] = (str, int, float),
+    param_key: str = "_param",
+    filename_key: str = "_filename",
+    sep: str = "|",
+    head_columns: Sequence[str] = ("_header",),
+    tail_columns: Sequence[str] = ("_process_time", "_filename"),
+    target_df: pd.DataFrame | None = None,
+    display: bool = False,
+) -> pd.DataFrame:
     if target_df is None:  # 追加先のdf
         target_df = pd.DataFrame()
         cached_filepath_set = set()

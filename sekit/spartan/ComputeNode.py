@@ -5,17 +5,23 @@ from multiprocessing import cpu_count
 from queue import Empty, Queue
 from subprocess import Popen
 from threading import Lock, Thread, current_thread
+from typing import Iterable, Sequence
 
 
 class ComputeNodeThread(Thread):
-    def __init__(self, p_cn, timeout=1, name="Thread"):
+    def __init__(
+        self,
+        p_cn: "ComputeNode",
+        timeout: int | float | None = 1,
+        name: str = "Thread",
+    ) -> None:
         super().__init__(name=name)
         self.p_cn = p_cn
         self.timeout = timeout
         self._continue = True
         self.cmd = None
 
-    def run(self):
+    def run(self) -> None:
         try:
             while self._continue:
                 try:
@@ -42,10 +48,10 @@ class ComputeNodeThread(Thread):
             # print(self.name + ' was killed.')
             pass
 
-    def reserve_killed(self):
+    def reserve_killed(self) -> None:
         self._continue = False
 
-    def exe_command(self):
+    def exe_command(self) -> Popen:
         return Popen(self.cmd, shell=True)
 
 
@@ -54,12 +60,12 @@ class ComputeNode:
 
     def __init__(
         self,
-        n_jobs=1,
-        interval=1,
-        device=None,
-        device_key="_device",
-        thread_name="localhost",
-    ):
+        n_jobs: int = 1,
+        interval: int | float = 1,
+        device: Sequence[str] | None = None,
+        device_key: str = "_device",
+        thread_name: str = "localhost",
+    ) -> None:
         # self.commands = commands
         self.n_jobs = n_jobs
         self.interval = interval
@@ -72,14 +78,14 @@ class ComputeNode:
         self.threads = []
 
     @property
-    def n_jobs(self):
+    def n_jobs(self) -> int:
         return self.__n_jobs
 
     @n_jobs.setter
-    def n_jobs(self, n_jobs):
+    def n_jobs(self, n_jobs: int) -> int:
         self.__n_jobs = cpu_count() if n_jobs < 0 else n_jobs
 
-    def _start_setup(self, commands):
+    def _start_setup(self, commands: Iterable[str]) -> None:
         if isinstance(commands, Queue):
             # Queueならそれを入れる
             self.q_commands = commands
@@ -91,37 +97,39 @@ class ComputeNode:
         else:
             raise TypeError("Queue型もしくはイテレーション型を入れてください")
 
-    def _start_thread(self, index):
+    def _start_thread(self, index: str) -> None:
         thread_name = "{}_{}".format(self.thread_name, index)
         thread = ComputeNodeThread(p_cn=self, name=thread_name)
         thread.start()
         self.threads.append(thread)
 
-    def start(self, commands):
+    def start(self, commands: Iterable[str]) -> None:
         self._start_setup(commands)
         for i in range(self.n_jobs):
             self._start_thread(i)
 
-    def check_continue(self):
+    def check_continue(self) -> bool:
         with self.lock:
             is_executing = any([t.cmd for t in self.threads])
             is_not_empty = self.q_commands.empty() is False
         return is_executing or is_not_empty
 
-    def wait_all(self):
+    def wait_all(self) -> None:
         while self.check_continue():
             time.sleep(self.interval)
             # queueの数が0になってかつ、すべてのThreadがqueueを待機していたら終了
             # queueを待機している=実行は終了しているから
         self.kill_all()
 
-    def change_n_jobs(self, n_jobs):  # 途中でjobの数を変える時の処理
+    def change_n_jobs(
+        self, n_jobs: int
+    ) -> None:  # 途中でjobの数を変える時の処理
         with self.lock:
             self.n_jobs = n_jobs
             while len(self.threads) < self.n_jobs:
                 self._start_thread(index=len(self.threads))
 
-    def change_device_state(self, devices):
+    def change_device_state(self, devices: Sequence[str]) -> None:
         with self.lock:
             tmp_device_state = OrderedDict([[d, 0] for d in devices])
             for g, v in self.device_state.items():
@@ -129,8 +137,8 @@ class ComputeNode:
                     tmp_device_state[g] = v
             self.device_state = tmp_device_state
 
-    def allocate_device(self):
-        allocated_device = None
+    def allocate_device(self) -> tuple[str, str]:
+        allocated_device: str | None = None
         with self.lock:
             min_value = min(self.device_state.values())
             for device, v in self.device_state.items():
@@ -141,13 +149,13 @@ class ComputeNode:
         # print('---', self.device_state)
         return self.device_key, allocated_device
 
-    def release_device(self, device):
+    def release_device(self, device: str) -> None:
         with self.lock:
             if device in self.device_state:
                 value = self.device_state[device] - 1
                 self.device_state[device] = max(0, value)
 
-    def kill_all(self):
+    def kill_all(self) -> None:
         with self.lock:
             for th in self.threads:
                 th.reserve_killed()

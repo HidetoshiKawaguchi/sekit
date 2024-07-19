@@ -1,12 +1,14 @@
 # -*- coding:utf-8 -*-
 import random
-from itertools import product
+from typing import Any, Callable, Sequence
 
 import numpy as np
 import pandas as pd
 
 
-def _get_param_out(in_df, sep, ignore):
+def _get_param_out(
+    in_df: pd.DataFrame, sep: str, ignore: Sequence[str]
+) -> tuple[list[str], list[str]]:
     param = []
     outkey = []
     param_flag = True
@@ -24,7 +26,12 @@ def _get_param_out(in_df, sep, ignore):
     return param, outkey
 
 
-def _sample(in_df, param, n_samples, connector="_________"):
+def _sample(
+    in_df: pd.DataFrame,
+    param: str,
+    n_samples: int,
+    connector: str = "_________",
+) -> pd.DataFrame:
     # パラメータの組み合わせ毎にindexを収集する
     sample_dict = dict()
     for index, row in in_df[param].iterrows():
@@ -53,18 +60,20 @@ def _compile(in_df, param, outkey, connector="_________"):
 
 
 def stats(
-    in_df,
-    sep="|",
-    ignore=("_seed", "_filename"),
-    count_key="_n",
-    stat_funcs=(
+    in_df: pd.DataFrame,
+    sep: str = "|",
+    ignore: Sequence[str] = ("_seed", "_filename"),
+    count_key: str = "_n",
+    stat_funcs: Sequence[
+        Sequence[str | Callable[[Sequence[Any]], int | float | str]]
+    ] = (
         ("(ave)", np.average),
         ("(std)", np.std),
         ("(min)", np.min),
         ("(max)", np.max),
     ),
-    n_samples=None,
-):
+    n_samples: int | None = None,
+) -> pd.DataFrame:
     connector = "_________"
 
     # パラメータと出力の取得
@@ -86,9 +95,6 @@ def stats(
     stats_dict = _compile(in_df, param, outkey, connector=connector)
 
     # dfに集計
-    stat_outkey = [
-        "{}{}".format(o, sf[0]) for o, sf in product(outkey, stat_funcs)
-    ]
     row_list = []
     for key, sampling_values in stats_dict.items():
         param_values = key.split(connector)

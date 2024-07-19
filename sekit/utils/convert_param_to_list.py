@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
+from typing import Any, Sequence
+
+
 def convert_param_to_list(
-    param: dict, tail_param: tuple = ("_seed_index", "_seed")
-) -> list:
+    param: dict[str, Any], tail_param: Sequence[str] = ("_seed_index", "_seed")
+) -> list[list[str, Any]]:
     """パラメータのdictを並びかえて, リスト形式にするジェネレータ関数.
     Parameters
     ----------
