@@ -6,7 +6,8 @@ Spartanは、実験を並列実行するためのツールです。
 
 ## コンピュータ1台での使い方
 1. 本リポジトリの`examples`内にある`spartan_input_1.yaml`と`spartan_command.py`を任意の場所に保存する。
-2. 以下のコマンドを実行する。
+2. 1.で保存したファイルのあるフォルダに移動する。
+3. 以下のコマンドを実行する。
 ```
 python -m sekit.spartan spartan_input_1.yaml
 ```

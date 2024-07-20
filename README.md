@@ -16,6 +16,9 @@
 - Stats
   - Searchの拡張ツール. Searchの結果から統計値を算出するツール
   - ドキュメント: `sekit/stats/README.md`
+- jymatplot
+  - JSONかYAMLからグラフ画像を描画するmatplotlibのラッパー
+  - ドキュメント `sekit/jymatplot/README.md`
 
 ## 必要なパッケージ
 Python3で動きます。
