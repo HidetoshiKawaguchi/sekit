@@ -15,7 +15,7 @@
   - ドキュメント: [docs/search.md](docs/search.md)
 - Stats
   - Searchの拡張ツール. Searchの結果から統計値を算出するツール
-  - ドキュメント: [docs/stats.md](docs/stats.mdb)
+  - ドキュメント: [docs/stats.md](docs/stats.md)
 - jymatplot
   - JSONかYAMLからグラフ画像を描画するmatplotlibのラッパー
   - ドキュメント [docs/jymatplot.md](docs/jymatplot.md)

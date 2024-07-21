@@ -9,7 +9,7 @@ jymatplotは、グラフ描画Pythonライブラリの matplotlib のラッパ�
 cat jymatplot_input_1.yaml | sekit-jymatplot --output jymatplot_output_1.png
 ```
 3. カレントディレクトリに`jymatplot_output_1.png`というグラフ画像ファイルが保存されているので、確認します。
-![sample1](https://raw.githubusercontent.com/HidetoshiKawaguchi/sekit/main/examples/jymatplot_output_1.png)
+![sample1](jymatplot_output_1.png)
 
 ## 入力の形式
 3.のコマンドは、`jymatplot_input_1.yaml`というグラフ描画の情報を入力として、`jymatplot_output_1.png` に保存をしています。`jymatplot_input_1.yaml`の中身は以下の通りになっています。
