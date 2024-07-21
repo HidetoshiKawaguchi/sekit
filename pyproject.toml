@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "sekit"
+version = "1.0.0"
+description = "Python tools to support scientific computing experiments."
+authors = ["Hidetoshi Kawaguchi <kawa.hide39@gmail.com>"]
+license = "MIT"
+homepage = "https://github.com/HidetoshiKawaguchi/sekit"
+repository = "https://github.com/HidetoshiKawaguchi/sekit"
+documentation = "https://github.com/HidetoshiKawaguchi/sekit"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pandas = "^2.2.2"
+pyyaml = "^6.0.1"
+matplotlib = "^3.9.1"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.2.2"
+black = "^24.4.2"
+isort = "^5.13.2"
+flake8 = "^7.1.0"
+autoflake = "^2.3.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 79
+
+[tool.poetry.scripts]
+sekit-search = "sekit.search.__main__:main"
+sekit-stats = "sekit.stats.__main__:main"
+sekit-spartan = "sekit.spartan.__main__:main"
+sekit-jymatplot = "sekit.jymatplot.__main__:main"

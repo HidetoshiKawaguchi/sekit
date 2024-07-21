@@ -1,8 +1,0 @@
-command: python sample/command.py
-param_grid:
-  - {hidden_layer_sizes: [[100, 200], [300]], activation: [relu, tanh], validation_fraction:[0.1]}
-  - {hidden_layer_sizes: [[500, 500, 500]], activation: [relu], validation_fraction:[0.4, 0.5]}
-hosts:
-  - {hostname: localhost, n_jobs: 4}
-option:
-  n_seeds: 2
