@@ -6,48 +6,24 @@
 各ツールの使い方は、それぞれのツールが保存されているディレクトリのREADMEを参照してください。
 - Spartan
   - クラスタマシン用分散実行ツール。ローカルマシンだけでも使えます。
-  - ドキュメント: `sekit/spartan/README.md`
+  - ドキュメント: [docs/spartan.md](docs/spartan.md)
 - EIO
   - 実験用関数をいい感じに保存するためのデコレータ
-  - ドキュメント: `sekit/eio/README.md`
+  - ドキュメント: [docs/eio.md](docs/eio.md)
 - Search
   - 実験結果が保存されたJSONファイルを集約して、CSV形式に変換するツール
-  - ドキュメント: `sekit/search/README.md`
+  - ドキュメント: [docs/search.md](docs/search.md)
 - Stats
   - Searchの拡張ツール. Searchの結果から統計値を算出するツール
-  - ドキュメント: `sekit/stats/README.md`
+  - ドキュメント: [docs/stats.md](docs/stats.mdb)
 - jymatplot
   - JSONかYAMLからグラフ画像を描画するmatplotlibのラッパー
-  - ドキュメント `sekit/jymatplot/README.md`
+  - ドキュメント [docs/jymatplot.md](docs/jymatplot.md)
 
-## 必要なパッケージ
-Python3で動きます。
-標準で含まれていない必要なライブラリはNumpy, Pandas, PyYAMLです。
-以下のコマンドでインストールできます。
+## インストール方法
+以下の pip install でインストールできます。
 ```
-pip install numpy
-```
-```
-pip install pandas
-```
-```
-pip install pyyaml
-```
-
-少なくとも、作者の以下の環境では動作します。
-```
-$ python --version
-Python 3.8.5
-```
-```
-$ pip freeze
-certifi==2020.12.5
-numpy==1.19.4
-pandas==1.1.5
-python-dateutil==2.8.1
-pytz==2020.5
-PyYAML==5.3.1
-six==1.15.0
+pip install sekit
 ```
 
 ## 【開発者向け】注意

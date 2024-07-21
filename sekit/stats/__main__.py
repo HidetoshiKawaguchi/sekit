@@ -9,7 +9,8 @@ import pandas as pd
 
 from .stats import stats
 
-if __name__ == "__main__":
+
+def main():
     parser = ArgumentParser(description="")
     # parser.add_argument('csv')
     parser.add_argument("-i", "--input", default="")
@@ -52,3 +53,7 @@ if __name__ == "__main__":
         n_samples=n_samples,
     )
     df.to_csv(args.output)
+
+
+if __name__ == "__main__":
+    main()

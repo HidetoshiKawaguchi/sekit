@@ -7,11 +7,11 @@ from argparse import ArgumentParser
 from datetime import datetime
 
 import yaml
-
-from ..utils import load_yaml_or_json
 from .simple_matplot import simple_matplot
+from ..utils import load_yaml_or_json
 
-if __name__ == "__main__":
+
+def main():
     parser = ArgumentParser()
     parser.add_argument("-i", "--input", default="")
     parser.add_argument("-o", "--output", default="")
@@ -38,3 +38,7 @@ if __name__ == "__main__":
 
     if args.display:
         print("saved a plot file, " + outpath)
+
+
+if __name__ == "__main__":
+    main()

@@ -8,7 +8,7 @@ EIOにより実験結果が保存されたJSONファイルを集約して、CSV�
 
 3. 以下のコマンドを実行する。
 ```
-python -m sekit.search search_inputs/*.json > search_output.csv
+sekit-search search_inputs/*.json > search_output.csv
 ```
 4. `search_output.csv `に実行結果が保存されているので確認します。
 ```

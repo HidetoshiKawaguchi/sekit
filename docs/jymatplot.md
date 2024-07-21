@@ -6,7 +6,7 @@ jymatplotは、グラフ描画Pythonライブラリの matplotlib のラッパ�
 2. 1.で保存したファイルのあるフォルダに移動する。
 3. 以下のコマンドを実行する。
 ```
-cat jymatplot_input_1.yaml | python -m sekit.jymatplot --output jymatplot_output_1.png
+cat jymatplot_input_1.yaml | sekit-jymatplot --output jymatplot_output_1.png
 ```
 3. カレントディレクトリに`jymatplot_output_1.png`というグラフ画像ファイルが保存されているので、確認します。
 ![sample1](https://raw.githubusercontent.com/HidetoshiKawaguchi/sekit/main/examples/jymatplot_output_1.png)

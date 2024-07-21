@@ -5,7 +5,8 @@ from argparse import ArgumentParser
 from ..utils import load_yaml_or_json
 from .Spartan import SpartanController
 
-if __name__ == "__main__":
+
+def main():
     parser = ArgumentParser(description="")
     parser.add_argument("filepath", help="")
     parser.add_argument("--mode", choices=["argparse", "json"])
@@ -52,3 +53,7 @@ if __name__ == "__main__":
         config_filepath=config_filepath,
         display=display,
     )
+
+
+if __name__ == "__main__":
+    main()

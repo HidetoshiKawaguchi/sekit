@@ -7,7 +7,8 @@ import pandas as pd
 
 from .search import search
 
-if __name__ == "__main__":
+
+def main():
     parser = ArgumentParser(description="")
     parser.add_argument("filepath", nargs="*")
     parser.add_argument("--dir", default=None)
@@ -36,3 +37,7 @@ if __name__ == "__main__":
         target_df=target_df,
     )
     df.to_csv(args.output)
+
+
+if __name__ == "__main__":
+    main()

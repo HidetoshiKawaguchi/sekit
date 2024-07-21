@@ -9,7 +9,7 @@ Spartanは、実験を並列実行するためのツールです。
 2. 1.で保存したファイルのあるフォルダに移動する。
 3. 以下のコマンドを実行する。
 ```
-python -m sekit.spartan spartan_input_1.yaml
+sekit-spartan spartan_input_1.yaml
 ```
 
 以上の手順を実行すると、以下のような表示時がされるかと思います。

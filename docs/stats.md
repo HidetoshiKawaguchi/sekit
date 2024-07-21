@@ -9,7 +9,7 @@ Searchで得たCSVに統計処理を行うツールです。
 
 3. 以下のコマンドを実行する。
 ```
-python -m sekit.search search_inputs/*.json | python -m sekit.stats > stats_output.csv
+sekit-search search_inputs/*.json | sekit-stats > stats_output.csv
 ```
 3. `stats_output.csv`に実行結果が保存されているので確認します。
 ```
