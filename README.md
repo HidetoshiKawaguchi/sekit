@@ -18,7 +18,7 @@
   - ドキュメント: [docs/stats.md](docs/stats.md)
 - jymatplot
   - JSONかYAMLからグラフ画像を描画するmatplotlibのラッパー
-  - ドキュメント [docs/jymatplot.md](docs/jymatplot.md)
+  - ドキュメント: [docs/jymatplot.md](docs/jymatplot.md)
 
 ## インストール方法
 以下の pip install でインストールできます。
