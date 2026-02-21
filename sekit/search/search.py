@@ -3,7 +3,7 @@ import json
 import os.path as op
 from glob import glob
 from itertools import chain
-from typing import Any, Callable, Sequence, Literal
+from typing import Any, Callable, Literal, Sequence
 
 import pandas as pd
 

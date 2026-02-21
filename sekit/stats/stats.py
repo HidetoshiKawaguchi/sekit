@@ -79,10 +79,10 @@ def stats(
     # パラメータと出力の取得
     param, outkey = _get_param_out(in_df, sep, ignore)
     dtypes = {
-        k: v for k, v in in_df.dtypes.items() if k in param and v != bool
+        k: v for k, v in in_df.dtypes.items() if k in param and v is not bool
     }
     bool_params = {
-        k for k, v in in_df.dtypes.items() if k in param and v == bool
+        k for k, v in in_df.dtypes.items() if k in param and v is bool
     }
     # dtypesは最後に出力のdfの型を保持するために必要．ただし，bool型以外
     # bool_paramsは，bool型のパラメータ．最後まとめていると，bool型が全てTrueに変換されてしまうため，特別な処理が必要

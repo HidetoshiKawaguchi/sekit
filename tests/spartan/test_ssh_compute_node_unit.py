@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import importlib
-from typing import Protocol
 from types import SimpleNamespace
+from typing import Protocol
 
 import pytest
 
