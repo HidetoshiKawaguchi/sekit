@@ -1,12 +1,24 @@
 # -*- coding: utf-8 -*-
 import importlib
+from typing import Protocol
 from types import SimpleNamespace
+
+import pytest
 
 ssh_module = importlib.import_module("sekit.spartan.SshComputeNode")
 
 
-def test_init_with_negative_n_jobs_uses_mocked_cpu_count(monkeypatch) -> None:
-    monkeypatch.setattr(ssh_module, "getoutput", lambda _: "12")
+class HasName(Protocol):
+    name: str
+
+
+def test_init_with_negative_n_jobs_uses_mocked_cpu_count(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def fake_getoutput(_: str) -> str:
+        return "12"
+
+    monkeypatch.setattr(ssh_module, "getoutput", fake_getoutput)
 
     compute_node = ssh_module.SshComputeNode("dummy-host", n_jobs=-1)
 
@@ -14,10 +26,12 @@ def test_init_with_negative_n_jobs_uses_mocked_cpu_count(monkeypatch) -> None:
     assert compute_node.n_jobs == 12
 
 
-def test_start_thread_uses_ssh_thread_without_network(monkeypatch) -> None:
-    started_names = []
+def test_start_thread_uses_ssh_thread_without_network(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    started_names: list[str] = []
 
-    def fake_start(self) -> None:
+    def fake_start(self: HasName) -> None:
         started_names.append(self.name)
 
     monkeypatch.setattr(ssh_module.SshComputeNodeThread, "start", fake_start)
@@ -31,10 +45,12 @@ def test_start_thread_uses_ssh_thread_without_network(monkeypatch) -> None:
     assert len(compute_node.threads) == 1
 
 
-def test_thread_exe_command_builds_ssh_command(monkeypatch) -> None:
-    captured = {}
+def test_thread_exe_command_builds_ssh_command(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    captured: dict[str, str | bool] = {}
 
-    def fake_popen(cmd, shell):
+    def fake_popen(cmd: str, shell: bool) -> SimpleNamespace:
         captured["cmd"] = cmd
         captured["shell"] = shell
         return SimpleNamespace()
