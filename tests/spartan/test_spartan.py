@@ -13,6 +13,8 @@ from sekit.spartan import SpartanController
 
 from .command import FILENAME_TEMPLATE
 
+pytestmark = pytest.mark.integration
+
 
 @pytest.mark.parametrize(
     "mode,n_seeds,max_seed", [("argparse", 3, 100), ("json", 10, 10000)]

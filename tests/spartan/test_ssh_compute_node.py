@@ -12,6 +12,8 @@ from sekit.spartan import SshComputeNode
 
 """
 
+pytestmark = pytest.mark.integration
+
 
 def test_init(ssh_server_name: str) -> None:
     """
