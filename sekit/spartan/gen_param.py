@@ -4,7 +4,7 @@ from typing import Any, Generator, Sequence
 
 
 def gen_param(
-    source: dict[str, Any] | Sequence[Sequence[str | Any]]
+    source: dict[str, Any] | Sequence[Sequence[str | Any]],
 ) -> Generator[dict[str, Any], None, None]:
     if type(source) is dict:
         source = source.items()

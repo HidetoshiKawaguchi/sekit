@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from typing import Any
 from types import SimpleNamespace
+from typing import Any
 
 import pytest
 
@@ -79,9 +79,7 @@ def test_controller_json_mode_uses_json_serializer(
             device_state={d: 0 for d in (device or [])},
         )
 
-    monkeypatch.setattr(
-        spartan_module, "Cluster", make_dummy_cluster
-    )
+    monkeypatch.setattr(spartan_module, "Cluster", make_dummy_cluster)
     monkeypatch.setattr(
         spartan_module,
         "ComputeNode",

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from typing import Callable
 
-
 from sekit.search import search
 
 

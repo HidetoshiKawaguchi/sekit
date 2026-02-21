@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from typing import Sequence
 from subprocess import Popen, getoutput
+from typing import Sequence
 
 from .ComputeNode import ComputeNode, ComputeNodeThread
 
