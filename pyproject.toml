@@ -43,3 +43,9 @@ packages = ["sekit"]
 
 [tool.black]
 line-length = 79
+
+[tool.pytest.ini_options]
+addopts = "-m 'not integration'"
+markers = [
+  "integration: marks tests that require integration environments",
+]

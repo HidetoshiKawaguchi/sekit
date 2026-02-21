@@ -4,11 +4,15 @@ from pathlib import Path
 from queue import Queue
 from typing import Generator
 
+import pytest
+
 from sekit.spartan import Cluster, ComputeNode, SshComputeNode
 
 """
 test_ssh_compute_node.pyのコメントに書かれている、テスト環境セットアップ方法を実施した上で実行すること
 """
+
+pytestmark = pytest.mark.integration
 
 
 def test_cluster(
