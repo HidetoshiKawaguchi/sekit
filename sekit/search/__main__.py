@@ -8,7 +8,7 @@ import pandas as pd
 from .search import search
 
 
-def main():
+def main() -> None:
     parser = ArgumentParser(description="")
     parser.add_argument("filepath", nargs="*")
     parser.add_argument("--dir", default=None)

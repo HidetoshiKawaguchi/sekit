@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
 import copy
+from typing import Any, cast
 
 import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
 
 
 class Markers:
-    def __init__(self):
+    def __init__(self) -> None:
         self.markers = [",", "o", "v", "^", "<", ">", "D", "p", "*"]
         self.index = 0
 
-    def next(self):
+    def next(self) -> str:
         out = self.markers[self.index]
         self.index += 1
         if self.index == len(self.markers):
@@ -23,17 +25,17 @@ _special_keys = {_init_key, _plots_key}
 
 
 def simple_matplot(
-    param: dict,
-    figsize: tuple = None,
-    dpi: int = None,
-    facecolor: str = None,
-    edgecolor: str = None,
+    param: dict[str, Any],
+    figsize: tuple[Any, ...] | None = None,
+    dpi: int | None = None,
+    facecolor: str | None = None,
+    edgecolor: str | None = None,
     linewidth: float = 0.0,
-    frameon: bool = None,
-    subplotpars=None,
-    tight_layout: bool = None,
-    constrained_layout=None,
-) -> plt.Figure:
+    frameon: bool | None = None,
+    subplotpars: Any = None,
+    tight_layout: bool | None = None,
+    constrained_layout: Any = None,
+) -> Figure:
     param = copy.deepcopy(param)
     fig = plt.figure(
         figsize=figsize,
@@ -41,7 +43,7 @@ def simple_matplot(
         facecolor=facecolor,
         edgecolor=edgecolor,
         linewidth=linewidth,
-        frameon=frameon,
+        frameon=cast(bool, frameon),
         subplotpars=subplotpars,
         tight_layout=tight_layout,
         constrained_layout=constrained_layout,

@@ -6,7 +6,7 @@ from .transform_param_value import transform_param_value
 
 
 def make_param_str(
-    params: dict | Sequence[Sequence[str | Any]],
+    params: dict[str, Any] | Sequence[Sequence[str | Any]],
     param_encoder: ParamEncoder | None = None,
     connector: str = "=",
     sep: str = ",",
@@ -25,7 +25,7 @@ def make_param_str(
     if param_encoder is None:
         param_encoder = ParamEncoder()
 
-    def make_element(k, v):
+    def make_element(k: str, v: Any) -> str:
         return connector.join(
             [param_encoder.encode(k), transform_param_value(v)]
         )

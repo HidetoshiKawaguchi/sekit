@@ -1,18 +1,20 @@
 # -*- coding: utf-8 -*-
 from subprocess import Popen, getoutput
-from typing import Sequence
+from typing import Any, Sequence, cast
 
 from .ComputeNode import ComputeNode, ComputeNodeThread
 
 
 class SshComputeNodeThread(ComputeNodeThread):
-    def exe_command(self) -> Popen:
+    def exe_command(self) -> Popen[Any]:
         ssh_header = "ssh " + self.p_cn.hostname + " "
         out_cmd = ""
-        for c in self.cmd.strip(" ;").split(";"):
-            one_cmd = ssh_header + "'{} ; {};'".format(self.p_cn.pre_cmd, c)
+        for c in cast(str, self.cmd).strip(" ;").split(";"):
+            one_cmd = ssh_header + "'{} ; {};'".format(
+                cast(Any, self.p_cn).pre_cmd, c
+            )
             out_cmd += one_cmd + " ; "
-        return Popen(out_cmd, shell=True)
+        return cast("Popen[Any]", Popen(out_cmd, shell=True))
 
 
 class SshComputeNode(ComputeNode):
@@ -31,7 +33,7 @@ class SshComputeNode(ComputeNode):
             interval=interval,
             device=device,
             device_key=device_key,
-            thread_name=thread_name,
+            thread_name=cast(str, thread_name),
         )
         self.pre_cmd = pre_cmd
         self.hostname = hostname
@@ -50,7 +52,7 @@ class SshComputeNode(ComputeNode):
         else:
             self.n_jobs = n_jobs
 
-    def _start_thread(self, index: str) -> None:
+    def _start_thread(self, index: int | str) -> None:
         thread_name = "{}_{}".format(self.thread_name, index)
         thread = SshComputeNodeThread(p_cn=self, name=thread_name)
         thread.start()

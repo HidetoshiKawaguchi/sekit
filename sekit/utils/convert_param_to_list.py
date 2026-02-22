@@ -4,7 +4,7 @@ from typing import Any, Sequence
 
 def convert_param_to_list(
     param: dict[str, Any], tail_param: Sequence[str] = ("_seed_index", "_seed")
-) -> list[list[str, Any]]:
+) -> list[tuple[str, Any] | list[Any]]:
     """パラメータのdictを並びかえて, リスト形式にするジェネレータ関数.
     Parameters
     ----------

@@ -5,7 +5,7 @@ import random
 from itertools import product
 from queue import Queue
 from time import sleep
-from typing import Any, Sequence
+from typing import Any, Sequence, cast
 
 import yaml
 
@@ -32,12 +32,12 @@ class SpartanController:
     ) -> None:
         if hosts is None:
             hosts = ({"hostname": "localhost", "n_jobs": 1, "interval": 1},)
-        compute_nodes = []
+        compute_nodes: list[ComputeNode] = []
         for hst in hosts:
-            hostname = hst["hostname"]
-            n_jobs = hst.get("n_jobs", 1)
-            interval = hst.get("interval", 1)
-            device = hst.get("device", [])
+            hostname = cast(str, hst["hostname"])
+            n_jobs = cast(int, hst.get("n_jobs", 1))
+            interval = cast(int | float, hst.get("interval", 1))
+            device: Sequence[str] = cast(Sequence[str], hst.get("device", []))
             if hostname == "localhost":
                 cn = ComputeNode(
                     n_jobs=n_jobs, interval=interval, device=device
@@ -86,9 +86,9 @@ class SpartanController:
                 hostname = hst.get("hostname", None)
                 if hostname is None:
                     continue
-                n_jobs = hst.get("n_jobs", None)
-                interval = hst.get("interval", None)
-                devices = hst.get("device", None)
+                n_jobs = cast(int | None, hst.get("n_jobs", None))
+                interval = cast(int | float | None, hst.get("interval", None))
+                devices = cast(Sequence[str] | None, hst.get("device", None))
                 self.cluster.update_compute_node(
                     hostname, n_jobs, interval, devices
                 )
@@ -98,7 +98,7 @@ class SpartanController:
             if display:
                 print("coludn't update config.")
 
-    def wait(self, interval: int | float = 1, display: bool = True):
+    def wait(self, interval: int | float = 1, display: bool = True) -> None:
         sleep(interval)
         if len(self.config_filepath) > 0:
             c_ts = os.stat(self.config_filepath).st_mtime
@@ -120,10 +120,10 @@ class SpartanController:
     ) -> None:
         if len(config_filepath) > 0:
             self.setup_config(config_filepath)
-        queue = Queue(maxsize)
+        queue: Queue[str] = Queue(maxsize)
         self.cluster.start(queue)
         if param_grid.__class__.__name__ == "dict":
-            param_grid = [param_grid]
+            param_grid = [cast(dict[str, Any], param_grid)]
         for _, source in product(range(n_seeds), param_grid):
             for param in gen_param(source):
                 param[seed_key] = random.randrange(max_seed)

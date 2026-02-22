@@ -6,7 +6,7 @@ from ..utils import load_yaml_or_json
 from .Spartan import SpartanController
 
 
-def main():
+def main() -> None:
     parser = ArgumentParser(description="")
     parser.add_argument("filepath", help="")
     parser.add_argument("--mode", choices=["argparse", "json"])

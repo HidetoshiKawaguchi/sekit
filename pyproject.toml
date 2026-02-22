@@ -30,6 +30,8 @@ dev = [
   "pytest>=8.2.2,<9",
   "ruff>=0.6.9,<1",
   "mypy>=1.11.2,<2",
+  "pandas-stubs>=2.2.3.241126,<3",
+  "types-PyYAML>=6.0.12.20250915,<7",
 ]
 
 [build-system]

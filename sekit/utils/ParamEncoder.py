@@ -7,7 +7,7 @@ class ParamEncoder:
     """実験用パラメータを短縮文字に変換するためのクラス"""
 
     def __init__(self, sep: str = "_") -> None:
-        self.mapping_ = {}
+        self.mapping_: dict[str, str] = {}
         self.sep = sep
 
     def encode(self, param: str, sep: str | None = None) -> str:

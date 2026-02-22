@@ -1,3 +1,3 @@
 from .stats import stats
 
-__all__ = [stats]
+__all__ = ["stats"]

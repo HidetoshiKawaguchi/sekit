@@ -3,6 +3,7 @@
 import io
 import sys
 from argparse import ArgumentParser
+from typing import Any, Callable, Sequence, cast
 
 import numpy as np
 import pandas as pd
@@ -10,7 +11,7 @@ import pandas as pd
 from .stats import stats
 
 
-def main():
+def main() -> None:
     parser = ArgumentParser(description="")
     # parser.add_argument('csv')
     parser.add_argument("-i", "--input", default="")
@@ -35,7 +36,10 @@ def main():
         "min": ("(min)", np.min),
         "max": ("(max)", np.max),
     }
-    stat_funcs = tuple(func_dict[a] for a in args.funcs)
+    stat_funcs = cast(
+        Sequence[tuple[str, Callable[[Sequence[Any]], Any]]],
+        tuple(func_dict[a] for a in args.funcs),
+    )
     n_samples = None if args.n_samples is None else int(args.n_samples)
 
     in_df = (

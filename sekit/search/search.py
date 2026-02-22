@@ -3,7 +3,7 @@ import json
 import os.path as op
 from glob import glob
 from itertools import chain
-from typing import Any, Callable, Literal, Sequence
+from typing import Any, Callable, Iterable, Sequence
 
 import pandas as pd
 
@@ -12,9 +12,9 @@ def search(
     filepath_list: Sequence[str],
     dir: str | None = None,
     out_funcs: Sequence[
-        Callable[[dict[str, Any]], int | float | str]
+        tuple[str, Callable[[dict[str, Any]], int | float | str]]
     ] = tuple(),
-    types: Sequence[Literal[str, int, float]] = (str, int, float),
+    types: Sequence[type[str] | type[int] | type[float]] = (str, int, float),
     param_key: str = "_param",
     filename_key: str = "_filename",
     sep: str = "|",
@@ -28,12 +28,15 @@ def search(
         cached_filepath_set = set()
     else:
         cached_filepath_set = set(target_df[filename_key])
+    paths: Iterable[str]
     if dir is not None:
-        filepath_list = chain(glob(op.join(dir, "*.json")), filepath_list)
+        paths = chain(glob(op.join(dir, "*.json")), filepath_list)
+    else:
+        paths = filepath_list
 
-    params = set()
-    row_list = []
-    for filepath in filepath_list:
+    params: set[str] = set()
+    row_list: list[dict[str, Any]] = []
+    for filepath in paths:
         if op.basename(filepath) in cached_filepath_set:
             if display:
                 print("skip " + filepath)
