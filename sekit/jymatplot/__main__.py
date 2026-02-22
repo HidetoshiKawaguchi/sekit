@@ -12,7 +12,7 @@ from ..utils import load_yaml_or_json
 from .simple_matplot import simple_matplot
 
 
-def main():
+def main() -> None:
     parser = ArgumentParser()
     parser.add_argument("-i", "--input", default="")
     parser.add_argument("-o", "--output", default="")
