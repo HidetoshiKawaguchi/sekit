@@ -11,7 +11,7 @@ from typing import Any, Iterable, Sequence, cast
 class ComputeNodeThread(Thread):
     def __init__(
         self,
-        p_cn: ComputeNode,
+        p_cn: "ComputeNode",
         timeout: int | float | None = 1,
         name: str = "Thread",
     ) -> None:
