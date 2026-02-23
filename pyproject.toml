@@ -1,6 +1,6 @@
 [project]
 name = "sekit"
-version = "1.0.0"
+version = "1.0.2"
 description = "Python tools to support scientific computing experiments."
 readme = "README.md"
 license = "MIT"
@@ -33,6 +33,7 @@ dev = [
   "pre-commit>=4.3.0,<5",
   "pandas-stubs>=2.2.3.241126,<3",
   "types-PyYAML>=6.0.12.20250915,<7",
+  "twine>=6.2.0",
 ]
 
 [build-system]
