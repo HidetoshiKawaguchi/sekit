@@ -1,0 +1,27 @@
+repos:
+  - repo: local
+    hooks:
+      - id: ruff-format
+        name: ruff format
+        entry: uv run ruff format
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: ruff-check-fix
+        name: ruff check --fix
+        entry: uv run ruff check --fix
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: mypy-strict
+        name: mypy --strict
+        entry: uv run mypy --strict sekit tests examples
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: pytest-unit
+        name: pytest (unit only)
+        entry: uv run pytest
+        language: system
+        pass_filenames: false
+        always_run: true

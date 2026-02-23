@@ -28,7 +28,9 @@ class DummyNode:
 def test_cluster_start_and_wait_all_with_mock_nodes() -> None:
     local_node = DummyNode("localhost")
     mock_ssh_node = DummyNode("mock-ssh-host")
-    compute_nodes = cast(tuple[ComputeNode, ComputeNode], (local_node, mock_ssh_node))
+    compute_nodes = cast(
+        tuple[ComputeNode, ComputeNode], (local_node, mock_ssh_node)
+    )
     cluster = Cluster(compute_nodes, interval=0)
 
     cluster.start(["echo 1", "echo 2"])

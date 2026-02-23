@@ -21,9 +21,7 @@ def test_init() -> None:
 
 
 @pytest.mark.parametrize("n_exe", [1, 5, 10])
-def test_start(
-    tmp_dir: Path, n_exe: int, interval: float
-) -> None:
+def test_start(tmp_dir: Path, n_exe: int, interval: float) -> None:
     """
     実行したいコマンドが実行されるかのテスト
     touchコマンドでファイルを作り、その数で過不足なく
@@ -44,9 +42,7 @@ def test_start(
 
 
 @pytest.mark.parametrize("device", (["mps"], ["cuda:0", "cuda:1"]))
-def test_device(
-    device: list[str], tmp_dir: Path, interval: float
-) -> None:
+def test_device(device: list[str], tmp_dir: Path, interval: float) -> None:
     """
     GPU等のdeviceの設定をコマンドに付与できるかのテスト.
     TODO: そもそもの構造として、ComputeNodeにこのテストがいるかは要検討.

@@ -74,7 +74,13 @@ def make_sample(
         activation: str,
         validation_fraction: float,
         _seed: int,
-    ) -> tuple[dict[str, Any], pd.DataFrame, dict[str, Any], pd.DataFrame, pd.DataFrame]:
+    ) -> tuple[
+        dict[str, Any],
+        pd.DataFrame,
+        dict[str, Any],
+        pd.DataFrame,
+        pd.DataFrame,
+    ]:
         dict_out = {
             "a": [a * 2 for a in hidden_layer_sizes],
             "b": "___" + activation + "___",

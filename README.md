@@ -82,6 +82,12 @@ ssh test-ssh-server
 uv run pytest
 ```
 
+### commit時の自動チェック (pre-commit)
+`git commit` 時に `ruff format` / `ruff check --fix` / `mypy --strict` / `pytest` (unit) を自動実行するには、以下を一度実行してください。
+```
+uv run pre-commit install
+```
+
 
 ## 作者情報
 - 名前: 川口英俊(Hidetoshi KAWAGUCHI)
