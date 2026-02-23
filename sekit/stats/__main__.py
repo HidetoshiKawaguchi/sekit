@@ -3,6 +3,7 @@
 import io
 import sys
 from argparse import ArgumentParser
+from typing import Any, Callable, Sequence
 
 import numpy as np
 import pandas as pd
@@ -10,7 +11,7 @@ import pandas as pd
 from .stats import stats
 
 
-def main():
+def main() -> None:
     parser = ArgumentParser(description="")
     # parser.add_argument('csv')
     parser.add_argument("-i", "--input", default="")
@@ -29,7 +30,7 @@ def main():
     args = parser.parse_args()
 
     # TODO:stat_funcsとn_samplesを整える
-    func_dict = {
+    func_dict: dict[str, tuple[str, Callable[[Sequence[Any]], Any]]] = {
         "ave": ("(ave)", np.average),
         "std": ("(std)", np.std),
         "min": ("(min)", np.min),

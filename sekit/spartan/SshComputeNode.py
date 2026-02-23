@@ -1,15 +1,24 @@
 # -*- coding: utf-8 -*-
 from subprocess import Popen, getoutput
-from typing import Sequence
+from typing import Any, Sequence, cast
 
 from .ComputeNode import ComputeNode, ComputeNodeThread
 
 
 class SshComputeNodeThread(ComputeNodeThread):
-    def exe_command(self) -> Popen:
+    def __init__(
+        self,
+        p_cn: "SshComputeNode",
+        timeout: int | float | None = 1,
+        name: str = "Thread",
+    ) -> None:
+        super().__init__(p_cn=p_cn, timeout=timeout, name=name)
+        self.p_cn: "SshComputeNode" = p_cn
+
+    def exe_command(self) -> Popen[Any]:
         ssh_header = "ssh " + self.p_cn.hostname + " "
         out_cmd = ""
-        for c in self.cmd.strip(" ;").split(";"):
+        for c in cast(str, self.cmd).strip(" ;").split(";"):
             one_cmd = ssh_header + "'{} ; {};'".format(self.p_cn.pre_cmd, c)
             out_cmd += one_cmd + " ; "
         return Popen(out_cmd, shell=True)
@@ -26,6 +35,7 @@ class SshComputeNode(ComputeNode):
         device_key: str = "_device",
         pre_cmd: str = "source .bash_profile",  # TODO: 何かいい書き方はないものか
     ) -> None:
+        thread_name = hostname if thread_name is None else thread_name
         super().__init__(
             n_jobs=n_jobs,
             interval=interval,
@@ -35,8 +45,6 @@ class SshComputeNode(ComputeNode):
         )
         self.pre_cmd = pre_cmd
         self.hostname = hostname
-        if thread_name is None:
-            thread_name = hostname
 
         if n_jobs < 0:
             cmd_grep_processor = (
@@ -50,7 +58,7 @@ class SshComputeNode(ComputeNode):
         else:
             self.n_jobs = n_jobs
 
-    def _start_thread(self, index: str) -> None:
+    def _start_thread(self, index: int | str) -> None:
         thread_name = "{}_{}".format(self.thread_name, index)
         thread = SshComputeNodeThread(p_cn=self, name=thread_name)
         thread.start()

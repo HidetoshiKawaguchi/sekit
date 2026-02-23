@@ -16,14 +16,14 @@ from ..utils import (
 )
 
 EioOutput: TypeAlias = (
-    dict[str, Any] | pd.DataFrame | tuple[dict | pd.DataFrame]
+    dict[str, Any] | pd.DataFrame | tuple[dict[str, Any] | pd.DataFrame, ...]
 )
 
 
 def _make_output_dir(
     mkdir: Literal["shallow", "deep", "on", "off"],
     out_dir: str,
-    param_list: list[list[str, Any]],
+    param_list: list[tuple[str, Any]],
     param_encoder: ParamEncoder,
     tail_param: Sequence[str],
 ) -> str:
@@ -55,7 +55,7 @@ def _make_output_dir(
 
 def _make_output_info(
     out_dir: str,
-    kargs: dict[Any, Any],
+    kargs: dict[str, Any],
     tail_param: Sequence[str],
     mkdir: Literal["shallow", "deep", "on", "off"],
 ) -> tuple[str, str]:
@@ -87,13 +87,11 @@ def eio(
     ensure_ascii: bool = False,
     mkdir: Literal["shallow", "deep", "on", "off"] = "off",
     indent: int = 4,
-    default: Callable[[Any], float | int | list] = support_numpy,
+    default: Callable[[Any], float | int | list[Any]] = support_numpy,
     tail_param: Sequence[str] = ("_seed",),
 ) -> Callable[[Callable[..., EioOutput]], Callable[..., EioOutput]]:
     def _eio(func: Callable[..., EioOutput]) -> Callable[..., EioOutput]:
-        def _decorated_func(
-            *args: tuple[...], **kargs: dict[str, Any]
-        ) -> EioOutput:
+        def _decorated_func(*args: Any, **kargs: Any) -> EioOutput:
             l_header = func.__name__ if header is None else header
             start_time = time.time()
             if trace_back:
@@ -123,7 +121,7 @@ def eio(
 
             # 出力ディレクトリとファイル名の文字列を使って、実際に書き込む
             # JSON用の書き込みメソッド
-            def write_json(result, cnt=0):
+            def write_json(result: dict[str, Any], cnt: int = 0) -> None:
                 if header_flag:
                     result["_header"] = l_header
                 if param_flag:
@@ -151,7 +149,7 @@ def eio(
                     f.write(result_json_str)
 
             # CSV用の書き込みメソッド
-            def write_csv(df, cnt=0):
+            def write_csv(df: pd.DataFrame, cnt: int = 0) -> None:
                 tail = "" if cnt == 0 else ("_" + str(cnt))
                 filename = "{},{}{}.csv".format(
                     l_header, filename_param_str, tail
