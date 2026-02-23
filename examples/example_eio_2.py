@@ -7,8 +7,8 @@ from sekit.eio import eio
 @eio()
 def example_eio_2(
     hidden_layer_sizes: list[int], activation: str, validation_fraction: float
-) -> tuple[dict[str, list[int] | str | float] | pd.DataFrame]:
-    dict_out = {
+) -> tuple[dict[str, list[int] | str | float], pd.DataFrame]:
+    dict_out: dict[str, list[int] | str | float] = {
         "a": [a * 2 for a in hidden_layer_sizes],
         "b": "___" + activation + "___",
         "c": validation_fraction * 3,

@@ -3,18 +3,18 @@ import json
 import os.path as op
 from glob import glob
 from itertools import chain
-from typing import Any, Callable, Sequence, Literal
+from typing import Any, Callable, Iterable, Sequence
 
 import pandas as pd
 
 
 def search(
-    filepath_list: Sequence[str],
+    filepath_list: Iterable[str],
     dir: str | None = None,
     out_funcs: Sequence[
-        Callable[[dict[str, Any]], int | float | str]
+        tuple[str, Callable[[dict[str, Any]], int | float | str]]
     ] = tuple(),
-    types: Sequence[Literal[str, int, float]] = (str, int, float),
+    types: Sequence[type[str] | type[int] | type[float]] = (str, int, float),
     param_key: str = "_param",
     filename_key: str = "_filename",
     sep: str = "|",
@@ -25,14 +25,14 @@ def search(
 ) -> pd.DataFrame:
     if target_df is None:  # 追加先のdf
         target_df = pd.DataFrame()
-        cached_filepath_set = set()
+        cached_filepath_set: set[str] = set()
     else:
         cached_filepath_set = set(target_df[filename_key])
     if dir is not None:
         filepath_list = chain(glob(op.join(dir, "*.json")), filepath_list)
 
-    params = set()
-    row_list = []
+    params: set[str] = set()
+    row_list: list[dict[str, Any]] = []
     for filepath in filepath_list:
         if op.basename(filepath) in cached_filepath_set:
             if display:
@@ -43,7 +43,9 @@ def search(
                 result = json.load(f)
                 if "_error_type" in result or param_key not in result:
                     continue
-            except Exception:
+            except Exception as e:
+                if display:
+                    print("skip {}: {}".format(filepath, e))
                 continue
         params = params | set(k for k in result.get(param_key, {}).keys())
         row_dict = {

@@ -27,6 +27,12 @@ pip install sekit
 ```
 
 ## 【開発者向け】注意
+### 開発環境のセットアップ (uv)
+依存パッケージの管理には `uv` を使用します。以下を実行してください。
+```
+uv sync --dev
+```
+
 ### テストのセットアップ
 テストを実行するためには、以下の手順を実行する必要があります。
 以下の手順のコマンドはすべて本リポジトリのルートディレクトリで実行されるものとします。
@@ -73,7 +79,13 @@ ssh test-ssh-server
 ### テストの実行方法
 テストコードはpytestで実装されています。以下のコマンドでテスト可能です。
 ```
-pytest
+uv run pytest
+```
+
+### commit時の自動チェック (pre-commit)
+`git commit` 時に `ruff format` / `ruff check --fix` / `mypy --strict` / `pytest` (unit) を自動実行するには、以下を一度実行してください。
+```
+uv run pre-commit install
 ```
 
 
@@ -84,4 +96,3 @@ pytest
 - Twitter: Hidetoshi_RM
 - Zenn: https://zenn.dev/hidetoshi
 - Qiita: https://qiita.com/Hidetoshi_Kawaguchi
-

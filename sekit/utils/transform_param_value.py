@@ -7,7 +7,7 @@ def transform_param_value(
     none_str: str = "null",
     kv: str = "-",
     dict_reverse: bool = False,
-):
+) -> str:
     """実験の値を文字列に変換する関数. 主にファイル名の生成のために使う
 
     Parameters

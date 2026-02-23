@@ -2,6 +2,7 @@
 """
 SpartanのEnd-to-Endテストで実行されるコマンド
 """
+
 import json
 from argparse import ArgumentParser
 from pathlib import Path

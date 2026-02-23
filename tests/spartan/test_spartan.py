@@ -5,13 +5,14 @@ import shutil
 import subprocess
 from itertools import chain, product
 from pathlib import Path
-from typing import Generator
 
 import pytest
 
 from sekit.spartan import SpartanController
 
 from .command import FILENAME_TEMPLATE
+
+pytestmark = pytest.mark.integration
 
 
 @pytest.mark.parametrize(
@@ -21,7 +22,7 @@ def test_spartan(
     mode: str,
     n_seeds: int,
     max_seed: int,
-    local_and_ssh_tmp_dir: Generator[Path, None, None],
+    local_and_ssh_tmp_dir: tuple[str, Path],
     interval: float,
 ) -> None:
     # ローカルとSSH先に実行するpythonファイルのコピー
@@ -31,7 +32,7 @@ def test_spartan(
     shutil.copy(source_command_path, exe_path)
     scp_command = [
         "scp",
-        source_command_path,
+        str(source_command_path),
         f"{ssh_server_name}:{tmp_dir_path}/",
     ]
     subprocess.run(scp_command)
@@ -45,7 +46,7 @@ def test_spartan(
         },
         {"a": [3], "b": ["giro"], "out_dir": [str(tmp_dir_path)]},
     ]
-    hosts = [
+    hosts: list[dict[str, str | int | float]] = [
         {"hostname": "localhost", "n_jobs": 1},
         {"hostname": ssh_server_name, "n_jobs": 1},
     ]

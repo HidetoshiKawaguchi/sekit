@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from argparse import ArgumentParser
+from argparse import ArgumentParser, BooleanOptionalAction
 
 from ..utils import load_yaml_or_json
 from .Spartan import SpartanController
 
 
-def main():
+def main() -> None:
     parser = ArgumentParser(description="")
     parser.add_argument("filepath", help="")
     parser.add_argument("--mode", choices=["argparse", "json"])
@@ -16,7 +16,9 @@ def main():
     parser.add_argument("--seed_key")
     parser.add_argument("--max_seed", type=int)
     parser.add_argument("--config_filepath")
-    parser.add_argument("--display", type=bool)
+    parser.add_argument(
+        "--display", action=BooleanOptionalAction, default=None
+    )
 
     args = parser.parse_args()
     input_dict = load_yaml_or_json(args.filepath)
@@ -35,12 +37,23 @@ def main():
     config_filepath = option.get("config_filepath", "")
     display = option.get("display", True)
 
-    # Overwrite command line parameters if setted them.
-    for k, v in args.__dict__.items():
-        if v is None:
-            continue
-        v = "'" + v + "'" if isinstance(v, str) else v
-        exec("{} = {}".format(k, v))
+    # Overwrite option values only when CLI args are explicitly provided.
+    if args.mode is not None:
+        mode = args.mode
+    if args.n_seeds is not None:
+        n_seeds = args.n_seeds
+    if args.max_size is not None:
+        maxsize = args.max_size
+    if args.interval is not None:
+        interval = args.interval
+    if args.seed_key is not None:
+        seed_key = args.seed_key
+    if args.max_seed is not None:
+        max_seed = args.max_seed
+    if args.config_filepath is not None:
+        config_filepath = args.config_filepath
+    if args.display is not None:
+        display = args.display
     sc = SpartanController(hosts, mode=mode)
     sc.exe(
         command,

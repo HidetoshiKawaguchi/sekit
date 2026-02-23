@@ -2,9 +2,8 @@
 import json
 import os
 from pathlib import Path
-from typing import Callable, Generator
+from typing import Any, Callable, Literal
 
-import numpy as np
 import pandas as pd
 import pytest
 
@@ -39,7 +38,7 @@ def made_dir_name() -> str:
 
 
 def make_sample(
-    out_dir: str = "./",
+    out_dir: str | Path = "./",
     header: str | None = None,
     param_flag: bool = True,
     header_flag: bool = True,
@@ -49,18 +48,13 @@ def make_sample(
     error_display: bool = False,
     sort_keys: bool = True,
     ensure_ascii: bool = False,
-    mkdir: str = "off",
+    mkdir: Literal["shallow", "deep", "on", "off"] = "off",
     indent: int = 4,
-    default: Callable[
-        [np.float32 | np.int64 | np.ndarray], float | int | list[int | float]
-    ] = support_numpy,
-    tail_param: tuple[str] = ("_seed",),
-) -> Callable[
-    [list[int], str, float, int],
-    tuple[dict, pd.DataFrame, dict, pd.DataFrame, pd.DataFrame],
-]:
+    default: Callable[[Any], float | int | list[Any]] = support_numpy,
+    tail_param: tuple[str, ...] = ("_seed",),
+) -> Callable[..., Any]:
     @eio(
-        out_dir=out_dir,
+        out_dir=str(out_dir),
         header=header,
         param_flag=param_flag,
         header_flag=header_flag,
@@ -72,15 +66,21 @@ def make_sample(
         ensure_ascii=ensure_ascii,
         mkdir=mkdir,
         indent=indent,
-        default=support_numpy,
+        default=default,
         tail_param=tail_param,
     )
     def sample(
-        hidden_layer_sizes: tuple,
+        hidden_layer_sizes: tuple[int, ...] | list[int],
         activation: str,
         validation_fraction: float,
         _seed: int,
-    ) -> tuple[dict, pd.DataFrame, dict, pd.DataFrame, pd.DataFrame]:
+    ) -> tuple[
+        dict[str, Any],
+        pd.DataFrame,
+        dict[str, Any],
+        pd.DataFrame,
+        pd.DataFrame,
+    ]:
         dict_out = {
             "a": [a * 2 for a in hidden_layer_sizes],
             "b": "___" + activation + "___",
@@ -98,7 +98,7 @@ def make_sample(
     return sample
 
 
-def assert_json(result: dict[str, dict[str, list[int] | str | float]]) -> None:
+def assert_json(result: dict[str, Any]) -> None:
     assert result["a"][0] == 200
     assert result["a"][1] == 400
     assert result["b"] == "___relu___"
@@ -116,7 +116,7 @@ def assert_df(df: pd.DataFrame) -> None:
     assert df["c"][0] == pytest.approx(0.3)
 
 
-def assert_eio(*args: list[Path]) -> None:
+def assert_eio(*args: Path) -> None:
     for filepath in args:
         ext = os.path.splitext(filepath)[1]
         if ext == ".json":
@@ -132,7 +132,7 @@ def assert_eio(*args: list[Path]) -> None:
 def test_eio_smoke(
     param: dict[str, list[int] | str | float | int],
     filenames: list[str],
-    tmp_dir: Generator[Path, None, None],
+    tmp_dir: Path,
 ) -> None:
     out_dir = tmp_dir
     sample = make_sample(out_dir=out_dir, display=False)
@@ -145,7 +145,7 @@ def test_eio_mkdir_on(
     param: dict[str, list[int] | str | float | int],
     filenames: list[str],
     made_dir_name: str,
-    tmp_dir: Generator[Path, None, None],
+    tmp_dir: Path,
 ) -> None:
     out_dir = tmp_dir
     mk_dir_path = out_dir / made_dir_name
@@ -161,7 +161,7 @@ def test_eio_mkdir_shallow(
     param: dict[str, list[int] | str | float | int],
     filenames: list[str],
     made_dir_name: str,
-    tmp_dir: Generator[Path, None, None],
+    tmp_dir: Path,
 ) -> None:
     out_dir = tmp_dir
     mk_dir_path = out_dir / made_dir_name
@@ -182,7 +182,7 @@ def test_eio_mkdir_deep(
     param: dict[str, list[int] | str | float | int],
     filenames: list[str],
     made_dir_name: str,
-    tmp_dir: Generator[Path, None, None],
+    tmp_dir: Path,
 ) -> None:
     out_dir = tmp_dir
     mk_dir_path = out_dir / made_dir_name

@@ -8,7 +8,7 @@ import pytest
 
 
 @pytest.fixture(scope="module")
-def search_filepath_list() -> list:
+def search_filepath_list() -> list[str]:
     here = Path(__file__).parent
     pattern = str(here / "data" / "results" / "*.json")
     filepath_list = [filepath for filepath in glob.glob(pattern)]
@@ -16,8 +16,8 @@ def search_filepath_list() -> list:
 
 
 @pytest.fixture
-def out_func_hoge_piyo() -> tuple[str, Callable[dict[str, int], int]]:
-    def _func_hoge_piyo(result: dict) -> int:
+def out_func_hoge_piyo() -> tuple[str, Callable[[dict[str, int]], int]]:
+    def _func_hoge_piyo(result: dict[str, int]) -> int:
         return result["hoge"] + result["piyo"]
 
     return ("hoge+piyo", _func_hoge_piyo)

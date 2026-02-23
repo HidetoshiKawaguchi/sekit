@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 from typing import Callable
 
-
 from sekit.search import search
 
 
 def test_search(
     search_filepath_list: list[str],
-    out_func_hoge_piyo: tuple[str, Callable[dict, int]],
+    out_func_hoge_piyo: tuple[str, Callable[[dict[str, int]], int]],
 ) -> None:
     df = search(search_filepath_list, out_funcs=(out_func_hoge_piyo,))
     assert len(df) == 42

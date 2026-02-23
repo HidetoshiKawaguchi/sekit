@@ -28,12 +28,12 @@ def _get_param_out(
 
 def _sample(
     in_df: pd.DataFrame,
-    param: str,
+    param: Sequence[str],
     n_samples: int,
     connector: str = "_________",
 ) -> pd.DataFrame:
     # パラメータの組み合わせ毎にindexを収集する
-    sample_dict = dict()
+    sample_dict: dict[str, list[Any]] = {}
     for index, row in in_df[param].iterrows():
         param_hash = connector.join(str(row[p]) for p in param)
         if param_hash not in sample_dict.keys():
@@ -41,15 +41,20 @@ def _sample(
         sample_dict[param_hash].append(index)
 
     # パラメータの組み合わせ毎にindexをサンプリングする
-    sampled_indices = set()
+    sampled_indices: set[Any] = set()
     for key, indices in sample_dict.items():
         ss = min(len(indices), n_samples)
         sampled_indices = sampled_indices | set(random.sample(indices, ss))
     return in_df[in_df.index.isin(sampled_indices)]
 
 
-def _compile(in_df, param, outkey, connector="_________"):
-    stats_dict = dict()
+def _compile(
+    in_df: pd.DataFrame,
+    param: Sequence[str],
+    outkey: Sequence[str],
+    connector: str = "_________",
+) -> dict[str, dict[str, list[Any]]]:
+    stats_dict: dict[str, dict[str, list[Any]]] = {}
     for _, row in in_df.iterrows():
         param_hash = connector.join(str(row[p]) for p in param)
         if param_hash not in stats_dict.keys():
@@ -64,9 +69,7 @@ def stats(
     sep: str = "|",
     ignore: Sequence[str] = ("_seed", "_filename"),
     count_key: str = "_n",
-    stat_funcs: Sequence[
-        Sequence[str | Callable[[Sequence[Any]], int | float | str]]
-    ] = (
+    stat_funcs: Sequence[tuple[str, Callable[[Sequence[Any]], Any]]] = (
         ("(ave)", np.average),
         ("(std)", np.std),
         ("(min)", np.min),
@@ -79,10 +82,10 @@ def stats(
     # パラメータと出力の取得
     param, outkey = _get_param_out(in_df, sep, ignore)
     dtypes = {
-        k: v for k, v in in_df.dtypes.items() if k in param and v != bool
+        k: v for k, v in in_df.dtypes.items() if k in param and v is not bool
     }
     bool_params = {
-        k for k, v in in_df.dtypes.items() if k in param and v == bool
+        k for k, v in in_df.dtypes.items() if k in param and v is bool
     }
     # dtypesは最後に出力のdfの型を保持するために必要．ただし，bool型以外
     # bool_paramsは，bool型のパラメータ．最後まとめていると，bool型が全てTrueに変換されてしまうため，特別な処理が必要
@@ -95,10 +98,10 @@ def stats(
     stats_dict = _compile(in_df, param, outkey, connector=connector)
 
     # dfに集計
-    row_list = []
+    row_list: list[dict[str, Any]] = []
     for key, sampling_values in stats_dict.items():
         param_values = key.split(connector)
-        row = {k: pv for k, pv in zip(param, param_values)}
+        row: dict[str, Any] = {k: pv for k, pv in zip(param, param_values)}
         for out_k, sv in sampling_values.items():
             for s, f in stat_funcs:
                 row[out_k + s] = f(sv)
