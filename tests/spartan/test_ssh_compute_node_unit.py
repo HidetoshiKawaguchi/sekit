@@ -48,13 +48,11 @@ def test_start_thread_uses_ssh_thread_without_network(
 def test_thread_exe_command_builds_ssh_command(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    captured_cmd = ""
-    captured_shell = False
+    captured_cmd: list[str] = []
 
-    def fake_popen(cmd: str, shell: bool) -> SimpleNamespace:
-        nonlocal captured_cmd, captured_shell
+    def fake_popen(cmd: list[str]) -> SimpleNamespace:
+        nonlocal captured_cmd
         captured_cmd = cmd
-        captured_shell = shell
         return SimpleNamespace()
 
     monkeypatch.setattr(ssh_module, "Popen", fake_popen)
@@ -66,6 +64,7 @@ def test_thread_exe_command_builds_ssh_command(
 
     thread.exe_command()
 
-    assert captured_shell is True
-    assert "ssh dummy-host 'source .profile ; echo hello;'" in captured_cmd
-    assert "ssh dummy-host 'source .profile ;  echo world;'" in captured_cmd
+    assert captured_cmd[0] == "ssh"
+    assert captured_cmd[1] == "dummy-host"
+    assert "source .profile ; echo hello;" in captured_cmd[2]
+    assert "source .profile ; echo world;" in captured_cmd[2]

@@ -16,12 +16,13 @@ class SshComputeNodeThread(ComputeNodeThread):
         self.p_cn: "SshComputeNode" = p_cn
 
     def exe_command(self) -> Popen[Any]:
-        ssh_header = "ssh " + self.p_cn.hostname + " "
-        out_cmd = ""
-        for c in cast(str, self.cmd).strip(" ;").split(";"):
-            one_cmd = ssh_header + "'{} ; {};'".format(self.p_cn.pre_cmd, c)
-            out_cmd += one_cmd + " ; "
-        return Popen(out_cmd, shell=True)
+        commands = [
+            c.strip() for c in cast(str, self.cmd).strip(" ;").split(";")
+        ]
+        remote_cmd = " ; ".join(
+            "{} ; {};".format(self.p_cn.pre_cmd, c) for c in commands if c
+        )
+        return Popen(["ssh", self.p_cn.hostname, remote_cmd])
 
 
 class SshComputeNode(ComputeNode):

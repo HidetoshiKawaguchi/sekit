@@ -3,6 +3,7 @@ import time
 from collections import OrderedDict
 from multiprocessing import cpu_count
 from queue import Empty, Queue
+from shlex import split as shlex_split
 from subprocess import Popen
 from threading import Lock, Thread, current_thread
 from typing import Any, Iterable, Sequence, cast
@@ -56,7 +57,7 @@ class ComputeNodeThread(Thread):
         self._continue = False
 
     def exe_command(self) -> Popen[Any]:
-        return Popen(cast(str, self.cmd), shell=True)
+        return Popen(shlex_split(cast(str, self.cmd)))
 
 
 class ComputeNode:
