@@ -43,7 +43,9 @@ def search(
                 result = json.load(f)
                 if "_error_type" in result or param_key not in result:
                     continue
-            except Exception:
+            except Exception as e:
+                if display:
+                    print("skip {}: {}".format(filepath, e))
                 continue
         params = params | set(k for k in result.get(param_key, {}).keys())
         row_dict = {

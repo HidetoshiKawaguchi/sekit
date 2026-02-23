@@ -94,9 +94,9 @@ class SpartanController:
                 )
             if display:
                 print("updated {} config.".format(hostname))
-        except Exception:
+        except Exception as e:
             if display:
-                print("coludn't update config.")
+                print("couldn't update config: {}".format(e))
 
     def wait(self, interval: int | float = 1, display: bool = True) -> None:
         sleep(interval)
