@@ -7,15 +7,15 @@ from pathlib import Path
 from sekit.eio import eio
 
 
-@eio(out_dir=Path(__file__).parent)
+@eio(out_dir=str(Path(__file__).parent))
 def sample(
-    hidden_layer_sizes: tuple,
+    hidden_layer_sizes: tuple[int, ...],
     activation: str,
     validation_fraction: float,
     _seed: int,
-) -> dict:
+) -> dict[str, float | str | list[float]]:
     random.seed(_seed)
-    dict_out = {
+    dict_out: dict[str, float | str | list[float]] = {
         "hoge": sum([a * 2 + random.random() for a in hidden_layer_sizes]),
         "goro": "___" + activation + "___",
         "piyo": validation_fraction * 3 + random.random(),

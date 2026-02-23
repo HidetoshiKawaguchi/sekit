@@ -80,7 +80,7 @@ def test_make_param_str(param: dict[str, Any]) -> None:
     assert param_str == "_s=2525,a=relu,hls=100_200,vf=0.1"
 
     pe = ParamEncoder()
-    pe.fit(param)
+    pe.fit(list(param.keys()))
     param_str = make_param_str(param, param_encoder=pe)
     assert param_str == "_s=2525,a=relu,hls=100_200,vf=0.1"
 
@@ -98,8 +98,8 @@ def test_make_param_str(param: dict[str, Any]) -> None:
 )
 def test_support_numpy(
     test_input: np.float32 | np.int64 | np.ndarray,
-    expected_value: float | int | list,
-    expected_type: type[float] | type[int] | type[list],
+    expected_value: float | int | list[int],
+    expected_type: type[Any],
 ) -> None:
     actual = support_numpy(test_input)
     assert actual == expected_value

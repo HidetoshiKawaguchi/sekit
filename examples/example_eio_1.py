@@ -6,7 +6,7 @@ from sekit.eio import eio
 def example_eio_1(
     hidden_layer_sizes: list[int], activation: str, validation_fraction: float
 ) -> dict[str, list[int] | str | float]:
-    dict_out = {
+    dict_out: dict[str, list[int] | str | float] = {
         "a": [a * 2 for a in hidden_layer_sizes],
         "b": "___" + activation + "___",
         "c": validation_fraction * 3,
