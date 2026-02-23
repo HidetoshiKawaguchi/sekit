@@ -19,9 +19,17 @@ class SshComputeNodeThread(ComputeNodeThread):
         commands = [
             c.strip() for c in cast(str, self.cmd).strip(" ;").split(";")
         ]
-        remote_cmd = " ; ".join(
-            "{} ; {};".format(self.p_cn.pre_cmd, c) for c in commands if c
-        )
+        remote_cmds: list[str] = []
+        for command in commands:
+            if not command:
+                continue
+            if self.p_cn.pre_cmd:
+                remote_cmds.append(
+                    "{} ; {}".format(self.p_cn.pre_cmd, command)
+                )
+            else:
+                remote_cmds.append(command)
+        remote_cmd = " ; ".join(remote_cmds)
         return Popen(["ssh", self.p_cn.hostname, remote_cmd])
 
 

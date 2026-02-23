@@ -66,5 +66,6 @@ def test_thread_exe_command_builds_ssh_command(
 
     assert captured_cmd[0] == "ssh"
     assert captured_cmd[1] == "dummy-host"
-    assert "source .profile ; echo hello;" in captured_cmd[2]
-    assert "source .profile ; echo world;" in captured_cmd[2]
+    assert "source .profile ; echo hello" in captured_cmd[2]
+    assert "source .profile ; echo world" in captured_cmd[2]
+    assert " ; ; " not in captured_cmd[2]
