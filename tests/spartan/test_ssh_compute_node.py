@@ -2,7 +2,6 @@
 import subprocess
 from pathlib import Path
 from queue import Queue
-from typing import Generator
 
 import pytest
 
@@ -32,7 +31,7 @@ def test_init(ssh_server_name: str) -> None:
 
 @pytest.mark.parametrize("n_exe", [1, 5, 10])
 def test_start(
-    ssh_tmp_dir: Generator[tuple[str, Path], None, None],
+    ssh_tmp_dir: tuple[str, Path],
     n_exe: int,
     interval: float,
 ) -> None:
@@ -52,7 +51,7 @@ def test_start(
     filename_list = [f"___test_{i}" for i in range(n_exe)]
     filepath_list = [out_dir / fn for fn in filename_list]
     commands = [f"touch {fp}" for fp in filepath_list]
-    q_commands = Queue()
+    q_commands: Queue[str] = Queue()
     for c in commands:
         q_commands.put(c)
     scn.start(q_commands)
@@ -66,8 +65,8 @@ def test_start(
 
 @pytest.mark.parametrize("device", (["mps"], ["cuda:0", "cuda:1"]))
 def test_device(
-    device: str,
-    ssh_tmp_dir: Generator[tuple[str, Path], None, None],
+    device: list[str],
+    ssh_tmp_dir: tuple[str, Path],
     interval: float,
 ) -> None:
     """
@@ -84,7 +83,7 @@ def test_device(
     exe = "python3 " + str(tmp_dir / "write_device_info.py ")
     outpath_list = [str(tmp_dir / f"device_info_{i}.txt") for i in range(5)]
     commands = [exe + outpath for outpath in outpath_list]
-    q_commands = Queue()
+    q_commands: Queue[str] = Queue()
 
     scn = SshComputeNode(
         ssh_server_name,
@@ -99,9 +98,8 @@ def test_device(
     scn.wait_all()
     for read_path in outpath_list:
         ssh_command = ["ssh", ssh_server_name, "cat", read_path]
-        assert (
-            subprocess.run(
-                ssh_command, encoding="utf-8", stdout=subprocess.PIPE
-            ).stdout
-            in device
-        )
+        stdout = subprocess.run(
+            ssh_command, encoding="utf-8", stdout=subprocess.PIPE
+        ).stdout
+        assert stdout is not None
+        assert stdout in device

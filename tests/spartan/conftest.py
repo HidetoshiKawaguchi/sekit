@@ -42,7 +42,7 @@ def ssh_tmp_dir(
 
 @pytest.fixture
 def local_and_ssh_tmp_dir(
-    ssh_server_name: str, tmp_dir: Generator[Path, None, None]
+    ssh_server_name: str, tmp_dir: Path
 ) -> Generator[tuple[str, Path], None, None]:
     """
     ローカルとSSHサーバの両方に同じ名前のディレクトリを作成して返すディレクトリ

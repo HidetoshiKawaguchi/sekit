@@ -6,7 +6,7 @@ from argparse import ArgumentParser
 
 def exe(a: float, b: str, _seed: int) -> str:
     random.seed(_seed)
-    s = 0
+    s = 0.0
     c = random.randint(1, 3)
     for _ in range(int(a * (c * 10**8))):
         s += a

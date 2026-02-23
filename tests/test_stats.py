@@ -11,7 +11,7 @@ from sekit.stats import stats
 
 def test_stats(
     search_filepath_list: list[str],
-    out_func_hoge_piyo: tuple[str, Callable[dict[str, int], int]],
+    out_func_hoge_piyo: tuple[str, Callable[[dict[str, int]], int]],
 ) -> None:
     df = search(search_filepath_list, out_funcs=(out_func_hoge_piyo,))
     stats_df = stats(df)

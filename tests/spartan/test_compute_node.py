@@ -2,7 +2,6 @@
 from multiprocessing import cpu_count
 from pathlib import Path
 from queue import Queue
-from typing import Generator
 
 import pytest
 
@@ -23,7 +22,7 @@ def test_init() -> None:
 
 @pytest.mark.parametrize("n_exe", [1, 5, 10])
 def test_start(
-    tmp_dir: Generator[Path, None, None], n_exe: int, interval: float
+    tmp_dir: Path, n_exe: int, interval: float
 ) -> None:
     """
     実行したいコマンドが実行されるかのテスト
@@ -35,7 +34,7 @@ def test_start(
     filename_list = [f"___test_{i}" for i in range(n_exe)]
     filepath_list = [out_dir / fn for fn in filename_list]
     commands = [f"touch {fp}" for fp in filepath_list]
-    q_commands = Queue()
+    q_commands: Queue[str] = Queue()
     for c in commands:
         q_commands.put(c)
     cn.start(q_commands)
@@ -46,8 +45,8 @@ def test_start(
 
 @pytest.mark.parametrize("device", (["mps"], ["cuda:0", "cuda:1"]))
 def test_device(
-    device: list[str], tmp_dir: Generator[Path, None, None], interval: float
-):
+    device: list[str], tmp_dir: Path, interval: float
+) -> None:
     """
     GPU等のdeviceの設定をコマンドに付与できるかのテスト.
     TODO: そもそもの構造として、ComputeNodeにこのテストがいるかは要検討.
@@ -61,7 +60,7 @@ def test_device(
     out_dir = tmp_dir
     outpath_list = [str(out_dir / f"device_info_{i}.txt") for i in range(5)]
     commands = [exe + outpath for outpath in outpath_list]
-    q_commands = Queue()
+    q_commands: Queue[str] = Queue()
     for c in commands:
         q_commands.put(c)
     cn.start(q_commands)
