@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from argparse import ArgumentParser
+from argparse import ArgumentParser, BooleanOptionalAction
 
 from ..utils import load_yaml_or_json
 from .Spartan import SpartanController
@@ -16,7 +16,9 @@ def main() -> None:
     parser.add_argument("--seed_key")
     parser.add_argument("--max_seed", type=int)
     parser.add_argument("--config_filepath")
-    parser.add_argument("--display", type=bool)
+    parser.add_argument(
+        "--display", action=BooleanOptionalAction, default=None
+    )
 
     args = parser.parse_args()
     input_dict = load_yaml_or_json(args.filepath)
